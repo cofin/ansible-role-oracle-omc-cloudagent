@@ -36,10 +36,10 @@ omc_cloudagent_users_create_homedirs: yes
 #   groups_to_create:
 #     - name: developers
 #       gid: 10000
-# omc_cloudagent_groups:
-#   - name: svc-omc
-#     gid: 543198
-#     sudo: yes
+omc_cloudagent_groups:
+  - name: svc-omc
+    gid: 543198
+    sudo: yes
 
 omc_cloudagent_authorized_keys_file: ".ssh/authorized_keys"
 
