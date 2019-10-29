@@ -25,7 +25,10 @@
   become: no
   run_once: yes
 
-- include: "{{ role_path }}/tasks/os.yml"
+- name: Configure OS
+  include_tasks: os.yml
+- name: Configure OMC User Account
+  include_tasks: user.yml
 
 - name: create destination directory
   file:
