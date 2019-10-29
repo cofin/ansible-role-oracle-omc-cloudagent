@@ -2,11 +2,19 @@
 # tasks file for oracle-omc-cloudagent
 - name: Set facts about installation
   include_tasks: facts.yml
+- name: create source directory for files
+  file:
+    dest: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ role_path }}/files"
+  delegate_to: localhost
+  become: no
 
 - name: check to see if we already have files downloaded
   local_action: stat path="{{ role_path }}/files/cloudagent_linux.x64.zip"
   become: no
-  delegate_to: localhost
+  #delegate_to: localhost
   register: ls_omc_cloudagent_image
 - name: "download latest cloud agent from public URL"
   get_url:
