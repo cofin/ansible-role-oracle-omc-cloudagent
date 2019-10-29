@@ -3,17 +3,17 @@
 - name: Set facts about installation
   include_tasks: facts.yml
 
+- name: check to see if we already have files downloaded
+  local_action: stat path="{{ role_path }}/files/cloudagent_linux.x64.zip"
+  become: no
+  delegate_to: localhost
+  register: ls_omc_cloudagent_image
 - name: "download latest cloud agent from public URL"
   get_url:
     url: "{{ omc_cloudagent_software_url }}"
     dest: "{{ role_path }}/files/cloudagent_linux.x64.zip"
   delegate_to: localhost
   become: no
-
-- name: Validate files exist locally
-  local_action: stat path="{{ role_path }}/files/cloudagent_linux.x64.zip"
-  become: no
-  register: ls_omc_cloudagent_image
 
 - include: "{{ role_path }}/tasks/os.yml"
 
