@@ -1,0 +1,69 @@
+---
+- name: Creating groups
+  group:
+    name: "{{ item.name }}"
+    gid: "{{ item.gid | default(omit) }}"
+  with_items: "{{ omc_cloudagent_groups }}"
+  tags: ["users", "groups", "configuration"]
+
+- name: Per-user group creation
+  group:
+    name: "{{ item.username }}"
+    gid: "{{ item.gid | default(item.uid) | default(omit) }}"
+  with_items: "{{ omc_cloudagent_users }}"
+  when: "'group' not in item and omc_cloudagent_users_create_per_user_group"
+  tags: ["users", "configuration"]
+
+- name: User creation
+  user:
+    name: "{{ item.username }}"
+    group: "{{ item.group | default(item.username if omc_cloudagent_users_create_per_user_group else omc_cloudagent_users_group) }}"
+    # empty string removes user from all secondary groups
+    groups: "{{ item.groups | join(',') if 'groups' in item else '' }}"
+    append: "{{ item.append | default(omit) }}"
+    shell: "{{ item.shell if item.shell is defined else omc_cloudagent_users_default_shell }}"
+    password: "{{ item.password if item.password is defined else '!' }}"
+    comment: "{{ item.name if item.name is defined else '' }}"
+    uid: "{{ item.uid | default(omit) }}"
+    home: "{{ item.home | default('/home/' + item.username) }}"
+    createhome: "{{ 'yes' if omc_cloudagent_users_create_homedirs else 'no' }}"
+    generate_ssh_key: "{{ item.generate_ssh_key | default(omit) }}"
+    update_password: "{{ item.update_password | default(omit) }}"
+  with_items: "{{ omc_cloudagent_users }}"
+  tags: ["users", "configuration"]
+
+- name: SSH keys
+  authorized_key:
+    user: "{{ item.0.username }}"
+    key: "{{ item.1 }}"
+    path: "{{ item.0.home | default('/home/' + item.0.username) }}/{{ authorized_keys_file }}"
+  with_subelements:
+    - "{{ omc_cloudagent_users }}"
+    - ssh_key
+    - skip_missing: yes
+  tags: ["users", "configuration"]
+
+- name: Setup user profiles
+  blockinfile:
+    block: "{{ item.profile }}"
+    dest: "{{ item.home | default('/home/' + item.username) }}/.profile"
+    owner: "{{ item.username }}"
+    group: "{{ item.group | default(item.username if omc_cloudagent_users_create_per_user_group else users_group) }}"
+    mode: 0644
+    create: true
+  when: omc_cloudagent_users_create_homedirs and item.profile is defined
+  with_items: "{{ omc_cloudagent_users }}"
+
+- name: Configure ulimits for users
+  pam_limits:
+    domain: "{{ item.0.username }}"
+    limit_type: "{{ item.1.limit_type }}"
+    limit_item: "{{ item.1.limit_item }}"
+    value: "{{item.1.value}}"
+  with_subelements:
+    - "{{ omc_cloudagent_users }}"
+    - ulimits
+    - skip_missing: yes
+  register: omc_cloudagent_ulimits
+  notify: "reload sysctl config"
+  tags: ["users", "configuration"]

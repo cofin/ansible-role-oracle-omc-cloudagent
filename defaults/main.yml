@@ -1,0 +1,90 @@
+---
+# defaults file for oracle-omc-cloudagent
+omc_cloudagent_enabled: yes
+omc_cloudagent_required_packages:
+  - bc
+  - setarch
+  - jq
+omc_cloudagent_tmp_dir: "/tmp/ansible-omc-cloudagent"
+omc_cloudagent_install_url: "https://storage.us2.oraclecloud.com/v1/Storage-a511425/omcprodglobal/cloudagent/linux.x64/latest/cloudagent_linux.x64.zip"
+omc_cloudagent_deploy_apm: no
+omc_cloudagent_databases:
+  - {
+    oracle_home: "",
+    grid_home: "/u01/app/12.1.0.2/grid",
+    service: "",
+    host: "",
+    port: "",
+    system_password: "",
+    user: ""
+  }
+
+# Create a group for every user and make that their primary group
+omc_cloudagent_users_create_per_user_group: yes
+# If we're not creating a per-user group, then this is the group all users
+# belong to
+omc_cloudagent_users_group: svc-omc
+# The default shell for a user if none is specified
+omc_cloudagent_users_default_shell: /bin/bash
+# Create home dirs for new users? Set this to false if you manage home
+# directories in some other way.
+omc_cloudagent_users_create_homedirs: yes
+
+# List of groups to create
+# Example:
+#   groups_to_create:
+#     - name: developers
+#       gid: 10000
+omc_cloudagent_groups:
+  - name: svc-omc
+    gid: 543198
+    sudo: yes
+
+omc_cloudagent_authorized_keys_file: ".ssh/authorized_keys"
+
+omc_cloudagent_users:
+  - username: svc-omc
+    name: Oracle OMC Monitoring User
+    group: svc-omc
+    uid: 543198
+    ulimts:
+      - { limit_type: "-", limit_item: "nofile", value: 400000 }
+      - { limit_type: "-", limit_item: "nproc", value: 400000 }
+      - { limit_type: "soft", limit_item: "memlock", value: unlimited }
+      - { limit_type: "hard", limit_item: "memlock", value: unlimited }
+
+omc_cloudagent_permissions:
+  - {user: "{{omc_cloudagent_users.username}}", path: "/var/log/yum.log*", permissions: "r"}
+  - {user: "{{omc_cloudagent_users.username}}", path: "/var/log/messages*", permissions: "r"}
+  - {user: "{{omc_cloudagent_users.username}}", path: "/var/log/cron*", permissions: "r"}
+  - {user: "{{omc_cloudagent_users.username}}", path: "/var/log/audit/audit*", permissions: "r"}
+  - {user: "{{omc_cloudagent_users.username}}", path: "/var/log/maillog*", permissions: "r"}
+  - {user: "{{omc_cloudagent_users.username}}", path: "/var/log/secure*", permissions: "r"}
+  - {user: "{{omc_cloudagent_users.username}}", path: "/var/log/sa", permissions: "rx"}
+  - {user: "{{omc_cloudagent_users.username}}", path: "/var/log/sa/*", permissions: "rx"}
+  - {user: "{{omc_cloudagent_users.username}}", path: "/var/log/audit", permissions: "r"}
+  - {user: "{{omc_cloudagent_users.username}}", path: "/var/log", permissions: "r"}
+  - {user: "{{omc_cloudagent_users.username}}", path: "/var/log/sa", permissions: "rx"}
+
+  # orignal
+  # - setfacl -m u:oracle:r /var/log/yum.log*
+  # - setfacl -m u:oracle:r /var/log/messages*
+  # - setfacl -m u:oracle:r /var/log/cron*
+  # - setfacl -m u:oracle:r /var/log/audit/audit*
+  # - setfacl -m u:oracle:r /var/log/secure*
+  # - setfacl -m u:oracle:r /var/log/maillog*
+  # - setfacl -m u:oracle:rx /var/log/sa # sar needs execute
+  # - setfacl -m u:oracle:rx /var/log/sa/* # sar needs execute
+  # - setfacl -d -m u:oracle:r /var/log
+  # - setfacl -d -m u:oracle:r /var/log/audit
+  # - setfacl -d -m u:oracle:rx /var/log/sa # sar needs execute
+
+
+omc_cloudagent_tenant_name: ""
+omc_cloudagent_registration_key: ""
+omc_cloudagent_base: ""
+omc_cloudagent_url_endpoint: ""
+omc_cloudagent_gateway_host: ""
+omc_cloudagent_gateway_port: ""
+omc_cloudagent_additional_gateways: ""
+omc_cloudagent_reinstall_agent: ""
