@@ -1,7 +1,7 @@
 ---
 - name: OMC commands
   set_fact:
-    oem_install_cmd: |
+    omc_cloudagent_install_cmd: |
       {{omc_cloudagent_stage_dir}}/agentInstall.sh \
         TENANT_NAME={{ omc_cloudagent_tenant_name }} \
         AGENT_REGISTRATION_KEY={{ omc_cloudagent_registration_key}} \
