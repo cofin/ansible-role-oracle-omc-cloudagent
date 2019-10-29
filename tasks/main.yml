@@ -1,28 +1,37 @@
 ---
 # tasks file for oracle-omc-cloudagent
-- name: Set facts about supplied information
-  include_tasks: set_facts.yml
+- name: Set facts about installation
+  include_tasks: facts.yml
   tags:
     - oem
-    - installation
-    - set_facts
 
-- name: Check for cloud agent files.
-  local_action: stat path="{{ role_path }}/files/cloudagent_linux.x64_{{ omc_agent_version }}.zip"
+- name: "download latest cloud agent from public URL"
+  get_url:
+    url: "{{ oem_software_url }}"
+    dest: "{{ role_path }}/files/cloudagent_linux.x64.zip"
+  delegate_to: localhost
+  become: false
+
+- name: Validate files exist locally
+  local_action: stat path="{{ role_path }}/files/cloudagent_linux.x64.zip"
   become: false
   register: ls_omc_cloudagent_image
 
 - include: "{{ role_path }}/tasks/os.yml"
 
-- name: creating temporary directory
+- name: create destination directory
   file:
-    path: "{{ omc_agent_tmp_install_dir }}"
+    dest: "{{ item }}"
     state: directory
-    owner: "{{ omc_agent_user }}"
-    group: "{{ omc_agent_group }}"
+    owner: "{{ omc_cloudagent_users.0.username }}"
+    group: "{{ omc_cloudagent_users.0.group }}"
+  with_items:
+    - "{{ omc_cloudagent_stage_dir }}"
+    - "{{ omc_cloudagent_install_dir }}"
+  become_user: root
 
-- name: Installing dependencies
-  yum:
-    name: "{{ omc_cloudagent_required_packages }}"
-    state: present
-  when: ansible_os_family == 'RedHat'
+- name: uploading and unarchive installer
+  unarchive:
+    src: "{{ role_path }}/files/cloudagent_linux.x64.zip"
+    dest: "{{ omc_cloudagent_stage_dir }}"
+  tags: install

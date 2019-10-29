@@ -2,7 +2,7 @@
 - name: OMC commands
   set_fact:
     oem_install_cmd: |
-      /tmp/ansible_omc_cloudagent/agentInstall.sh \
+      {{omc_cloudagent_stage_dir}}/agentInstall.sh \
         TENANT_NAME={{ omc_cloudagent_tenant_name }} \
         AGENT_REGISTRATION_KEY={{ omc_cloudagent_registration_key}} \
         AGENT_BASE_DIRECTORY={{ omc_cloudagent_base }} \
@@ -11,5 +11,5 @@
         GATEWAY_PORT={{ omc_cloudagent_gateway_port }} \
         ADDITIONAL_GATEWAYS={{ omc_cloudagent_additional_gateways }} \
         REINSTALL={{ omc_cloudagent_reinstall_agent }}
-    install_success_line: "Successfully installed Enterprise Manager Cloud Control."
-  when: "oem_major_number  == '13.3.3'"
+    omc_cloudagent_user: "{{omc_cloudagent_users.0.username }}"
+    omc_cloudagent_group: "{{omc_cloudagent_users.0.group }}"

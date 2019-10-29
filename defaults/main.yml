@@ -5,8 +5,9 @@ omc_cloudagent_required_packages:
   - bc
   - setarch
   - jq
-omc_cloudagent_tmp_dir: "/tmp/ansible-omc-cloudagent"
+omc_cloudagent_stage_dir: "/tmp/ansible-omc-cloudagent"
 omc_cloudagent_install_url: "https://storage.us2.oraclecloud.com/v1/Storage-a511425/omcprodglobal/cloudagent/linux.x64/latest/cloudagent_linux.x64.zip"
+omc_cloudagent_install_dir: "/opt/oracle/omc"
 omc_cloudagent_deploy_apm: no
 omc_cloudagent_databases:
   - {
@@ -35,10 +36,10 @@ omc_cloudagent_users_create_homedirs: yes
 #   groups_to_create:
 #     - name: developers
 #       gid: 10000
-omc_cloudagent_groups:
-  - name: svc-omc
-    gid: 543198
-    sudo: yes
+# omc_cloudagent_groups:
+#   - name: svc-omc
+#     gid: 543198
+#     sudo: yes
 
 omc_cloudagent_authorized_keys_file: ".ssh/authorized_keys"
 
