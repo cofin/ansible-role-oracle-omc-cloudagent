@@ -1,0 +1,20 @@
+---
+- name: set default file acl permissions for cloudagent user
+  shell: "setfacl -d -m u:{{item.user}}:{{item.permissions}} {{ item.path }}"
+  with_items: "{{ omc_cloudagent_permissions.defaults }}"
+  become: yes
+  become_user: root
+
+- name: set ACL permissions for cloudagent user on existing files
+  shell: "setfacl -m u:{{item.user}}:{{item.permissions}} {{ item.path }}"
+  with_items: "{{ omc_cloudagent_permissions.files }}"
+  become: yes
+  become_user: root
+
+- name: set CPU throttle on cloud agent to ensure it doesn't consume too much CPU
+  shell: |
+    sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli setproperty agent -allow_new -name _targetedCpuPct -value {{omc_cloudagent_cpu_throttle_percentage}}
+  become: yes
+  become_user: "{{omc_cloudagent_user}}"
+  when:
+    - "omc_cloudagent_cpu_throttle_percentage is defined"

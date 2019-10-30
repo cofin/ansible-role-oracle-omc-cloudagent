@@ -2,48 +2,13 @@
 # tasks file for oracle-omc-cloudagent
 - name: Set facts about installation
   include_tasks: facts.yml
-- name: create source directory for files
-  file:
-    dest: "{{ item }}"
-    state: directory
-  with_items:
-    - "{{ role_path }}/files"
-  delegate_to: localhost
-  become: no
-  run_once: yes
-- name: check to see if we already have files downloaded
-  local_action: stat path="{{ role_path }}/files/cloudagent_linux.x64.zip"
-  become: no
-  #delegate_to: localhost
-  register: ls_omc_cloudagent_image
-  run_once: yes
-- name: "download latest cloud agent from public URL"
-  get_url:
-    url: "{{ omc_cloudagent_software_url }}"
-    dest: "{{ role_path }}/files/cloudagent_linux.x64.zip"
-  delegate_to: localhost
-  become: no
-  run_once: yes
-
-- name: Configure OS
+- name: configure OS prerequisites
   include_tasks: os.yml
-- name: Configure OMC User Account
+- name: configure OS level
   include_tasks: user.yml
-
-- name: create destination directory
-  file:
-    dest: "{{ item }}"
-    state: directory
-    owner: "{{ omc_cloudagent_users.0.username }}"
-    group: "{{ omc_cloudagent_users.0.group }}"
-  with_items:
-    - "{{ omc_cloudagent_stage_dir }}"
-    - "{{ omc_cloudagent_install_dir }}"
-  become: yes
-  become_user: root
-
-- name: uploading and unarchive installer
-  unarchive:
-    src: "{{ role_path }}/files/cloudagent_linux.x64.zip"
-    dest: "{{ omc_cloudagent_stage_dir }}"
-  tags: install
+- name: fetch cloud image
+  include_tasks: fetch.yml
+- name: install agent
+  include_tasks: install.yml
+- name: execute post-installation steps
+  include_tasks: post-install.yml

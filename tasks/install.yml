@@ -1,0 +1,69 @@
+---
+- name: create directories required for installation
+  file:
+    dest: "{{ item }}"
+    state: directory
+    owner: "{{ omc_cloudagent_user }}"
+    group: "{{ omc_cloudagent_group }}"
+  with_items:
+    - "{{ omc_cloudagent_stage_dir }}"
+    - "{{ omc_cloudagent_install_dir }}"
+  become: yes
+  become_user: root
+
+- name: uploading and unarchiving installer
+  unarchive:
+    src: "{{ role_path }}/files/cloudagent_linux.x64.zip"
+    dest: "{{ omc_cloudagent_stage_dir }}"
+  tags: install
+
+- name: determine if there is an existing installation
+  stat:
+    path: "{{ omc_cloudagent_install_dir }}/agent_inst/bin/omcli"
+  register: existing_omc_install
+
+- name: when there is no existing installation or re-install has been set to true
+  block:
+    - name: installing omc cloudagent
+      shell: sh {{ omc_cloudagent_install_cmd }}
+      args:
+        chdir: "{{ omc_cloudagent_stage_dir }}"
+      become: yes
+      become_user: "{{ omc_cloudagent_user }}"
+
+    - name: executing root.sh configuration script
+      shell: "{{ omc_agent_base_dir }}/core/{{ omc_agent_version }}/root.sh"
+      become: yes
+      become_user: root
+
+    - name: set flag to indicate this block was successful
+      set_fact:
+        omc_cloudagent_installed: yes
+  when:
+    - (existing_omc_install.stat.exists == False or omc_cloudagent_reinstall_agent == True)
+- name: ensure installed agent is running and configured to start at boot
+  block:
+    - name: Copy templated initialization script
+      template:
+        src: "{{ role_path }}/templates/init.omc-agent.j2"
+        dest: /etc/init.d/omc-agent
+        owner: root
+        group: root
+        mode: 0740
+    - name: Enable and start at boot
+      service:
+        name: omc-agent
+        state: started
+        enabled: yes
+    - name: Verify the agent is running on the specified port
+      wait_for:
+        port: "{{ item }}"
+        state: started # Port should be open
+        delay: 5 # No wait before first check (sec)
+        timeout: 5 # Stop checking after timeout (sec)
+      with_items:
+        - "{{ omc_cloudagent_port }}"
+    - set_fact:
+        omc_cloudagent_enabled: yes
+  when:
+    - "omc_cloudagent_installed is defined and omc_cloudagent_installed == True"

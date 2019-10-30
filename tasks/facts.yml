@@ -1,11 +1,12 @@
 ---
-- name: OMC commands
+- name: set basic variables for use in play
   set_fact:
     omc_cloudagent_install_cmd: |
       {{omc_cloudagent_stage_dir}}/agentInstall.sh \
         TENANT_NAME={{ omc_cloudagent_tenant_name }} \
         AGENT_REGISTRATION_KEY={{ omc_cloudagent_registration_key}} \
-        AGENT_BASE_DIRECTORY={{ omc_cloudagent_base }} \
+        AGENT_BASE_DIRECTORY={{ omc_cloudagent_install_dir }} \
+        AGENT_PORT={{ omc_clouudagent_port }}
         OMC_URL={{ omc_cloudagent_url_endpoint }} \
         GATEWAY_HOST={{ omc_cloudagent_gateway_host }} \
         GATEWAY_PORT={{ omc_cloudagent_gateway_port }} \
