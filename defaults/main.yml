@@ -7,7 +7,7 @@ omc_cloudagent_required_packages:
   - jq
 omc_cloudagent_stage_dir: "/tmp/ansible-omc-cloudagent"
 omc_cloudagent_software_url: "https://storage.us2.oraclecloud.com/v1/Storage-a511425/omcprodglobal/cloudagent/linux.x64/latest/cloudagent_linux.x64.zip"
-omc_cloudagent_install_dir: "/opt/oracle/omc"
+omc_cloudagent_install_dir: "/opt/oracle/omc/agent"
 omc_cloudagent_deploy_apm: no
 omc_cloudagent_databases:
   - {
@@ -85,7 +85,6 @@ omc_cloudagent_permissions:
 omc_cloudagent_agent_port: "4459"
 omc_cloudagent_tenant_name: "changeme"
 omc_cloudagent_registration_key: "changeme"
-omc_cloudagent_base: "/opt/oracle/omc"
 omc_cloudagent_url_endpoint: "https://localhost.localdomain"
 omc_cloudagent_gateway_host: "localhost.localdomain"
 omc_cloudagent_gateway_port: "8080"
