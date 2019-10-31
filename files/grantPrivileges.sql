@@ -3,7 +3,7 @@ Rem $Header: empl/oracle.em.sgfm/source/agent/scripts/grantPrivileges.sql /st_em
 Rem
 Rem grantPrivileges.sql
 Rem
-Rem Copyright (c) 2018, 2019, Oracle and/or its affiliates. 
+Rem Copyright (c) 2018, 2019, Oracle and/or its affiliates.
 Rem All rights reserved.
 Rem
 Rem    NAME
@@ -39,9 +39,9 @@ set linesize 32767
 set feedback off
 set heading off
 
-declare 
+declare
 	role_exist integer;
-	db_version v$instance.version%type; 
+	db_version v$instance.version%type;
 	db_major_version INTEGER;
 	db_minor_version INTEGER;
 	db_sub_version INTEGER;
@@ -49,18 +49,23 @@ declare
 	isdb_version_above_122 BOOLEAN;
 	is_db_cdb varchar2(3);
 	dbrole varchar2(25);
-	monuser varchar2(25); 
+	monuser varchar2(25);
 	number_Of_grants_given INTEGER;
 	user_exist integer;
 	management_pack_value VARCHAR2(4000);
 	number_of_editions INTEGER;
-	db_role varchar2(25); 
+	db_role varchar2(25);
 	invoked_by_ita BOOLEAN;
 	sql_stmt varchar2 ( 100 ) := 'SELECT CDB from v$database';
+	-- added by Cody for EBS integration
+	ebs_tbl_cnt number;
+    table_not_found EXCEPTION;
+    PRAGMA exception_init ( table_not_found, -00942 );
+
 begin
-	if ('&3' ='Y') then 
+	if ('&3' ='Y') then
 		invoked_by_ita := TRUE;
-	else 
+	else
 		invoked_by_ita := FALSE;
 	end if;
 	select version into db_version from v$instance;
@@ -71,15 +76,15 @@ begin
 	db_minor_version=1
 	db_sub_version=2
 	*/
-    SELECT to_number(SUBSTR(db_version, 
-                            1, 
+    SELECT to_number(SUBSTR(db_version,
+                            1,
                             Instr(db_version, '.', 1, 1)-1 )) ,
-           to_number(SUBSTR(db_version, 
-                            Instr(db_version, '.', 1, 1)+1 , 
-                            Instr(db_version, '.', 1, 2) - Instr(db_version, '.', 1, 1)-1)), 
-	   to_number(SUBSTR(db_version, 
-                            Instr(db_version, '.', 1, 3)+1 , 
-                            Instr(db_version, '.', 1, 4) - Instr(db_version, '.', 1, 3)-1))  
+           to_number(SUBSTR(db_version,
+                            Instr(db_version, '.', 1, 1)+1 ,
+                            Instr(db_version, '.', 1, 2) - Instr(db_version, '.', 1, 1)-1)),
+	   to_number(SUBSTR(db_version,
+                            Instr(db_version, '.', 1, 3)+1 ,
+                            Instr(db_version, '.', 1, 4) - Instr(db_version, '.', 1, 3)-1))
 	into db_major_version, db_minor_version , db_sub_version
     FROM DUAL;
 
@@ -124,8 +129,8 @@ begin
 	else
 		isdb_version_above_12 := false;
 	end if;
-	
-	if (((isdb_version_above_12 = true) and (db_minor_version >= 2))	or ( db_major_version >= 18 )) then 
+
+	if (((isdb_version_above_12 = true) and (db_minor_version >= 2))	or ( db_major_version >= 18 )) then
 		isdb_version_above_122 := true;
 	else
 	  isdb_version_above_122 := false;
@@ -134,7 +139,7 @@ begin
 	/*
 	CDB column not available in 11 version of dbs, provide default value as 'NO'
 	*/
-	if (isdb_version_above_12 ) then 
+	if (isdb_version_above_12 ) then
 	   execute immediate sql_stmt into is_db_cdb ;
 	   execute immediate 'select nvl(max(upper(value)),''NONE'') from   v$parameter WHERE NAME=''control_management_pack_access'' AND con_id <= 1' into management_pack_value;
 	else
@@ -143,15 +148,15 @@ begin
 	end if;
 	dbms_output.Put_line ('Enabled Pack: ' || management_pack_value);
 
-	if (invoked_by_ita and (number_of_editions = 0 or management_pack_value = 'NONE')) then 
+	if (invoked_by_ita and (number_of_editions = 0 or management_pack_value = 'NONE')) then
 		dbms_output.Put_line('WARNING: ITA will only collect available performance metrics for Standard Edition databases.');
 	end if;
-	
+
 	execute immediate 'SELECT sys_context(''USERENV'',''DATABASE_ROLE'') from dual' into 	db_role;
 	if	(invoked_by_ita and db_role <> 'PRIMARY') then
 		dbms_output.Put_line('WARNING: ITA will not collect performance metrics for standby DB.');
 	end if;
-		
+
 	if (is_db_cdb = 'YES') then
 		dbrole := 'c##omc_mon_role';
 		if(length('&1')>2 and upper(substr('&1',1,3)) <> 'C##') then
@@ -164,7 +169,7 @@ begin
 		dbrole := 'omc_mon_role';
 		monuser := '&1';
 	end if;
-	
+
 	select count(*) into role_exist from dba_roles where role=upper(dbrole);
 	if (role_exist = 0) then
 		execute immediate 'create role ' || dbrole;
@@ -383,7 +388,7 @@ begin
 
         dbms_output.Put_line ('granting select on DBA_SCHEDULER_JOBS to ' || dbrole );
         execute immediate 'grant select on DBA_SCHEDULER_JOBS to ' || dbrole;
-   
+
 
         dbms_output.Put_line ('granting select on sys."_CURRENT_EDITION_OBJ" to ' || dbrole );
         execute immediate 'grant select on sys."_CURRENT_EDITION_OBJ" to ' || dbrole;
@@ -399,10 +404,10 @@ begin
 
         dbms_output.Put_line ('granting select on v_$option to ' || dbrole );
         execute immediate 'grant select on v_$option to ' || dbrole;
-	
+
 
 	/* End of IM privileges */
-	
+
 	/* ITA related privileges */
 	if(invoked_by_ita) then
 		dbms_output.Put_line ('granting select ON sys.dba_hist_snapshot to  ' || dbrole);
@@ -560,15 +565,184 @@ begin
 	end if;
 	/* END OF Privileges that can be added only for DBs above version 12.2 */
 
+	select count(1)
+	into ebs_tbl_cnt
+	from dba_all_tables
+	where table_name = upper('fnd_product_groups');
+
+	if ( ebs_tbl_cnt > 0 ) then
+		is_db_ebs := true;
+		dbms_output.put_line('ebs tables detected.');
+	else
+		is_db_ebs := false;
+		dbms_output.put_line('ebs not detected');
+	end if;
+
+    /* adding ebs privs */
+	if (is_db_ebs) then
+		dbms_output.put_line('granting EBS permissions.');
+        --dbms_output.put_line('granting connect to ' || monuser);
+
+		execute immediate 'grant connect to ' || monuser;
+				--dbms_output.put_line('granting select on ebs tables to ' || monuser);
+
+		execute immediate 'grant select on apps.fnd_oam_context_files to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_product_groups to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_conc_prog_onsite_info to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_concurrent_programs_vl to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_concurrent_requests to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_application_vl to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_concurrent_queues to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_lookups to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_concurrent_worker_requests to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_concurrent_worker_requests to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_concurrent_queues_vl to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_oam_fnduser_vl to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_form_sessions_v to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_cp_services to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_concurrent_processes to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_svc_components to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_log_messages to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_concurrent_programs to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_conflicts_domain to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_oracle_userid to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_app_servers to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_nodes to  ' || monuser;
+
+		execute immediate 'grant select on apps.icx_sessions to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_user to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_responsibility to  ' || monuser;
+        execute immediate 'grant select on apps.wf_deferred to  ' || monuser;
+		execute immediate 'grant select on apps.wf_notification_in to  ' || monuser;
+		execute immediate 'grant select on apps.wf_notification_out to  ' || monuser;
+
+
+		dbms_output.put_line('granting execute on ebs packages to ' || monuser);
+
+		execute immediate 'grant excecute on apps.fnd_oam_em to ' || monuser;
+
+		execute immediate 'grant excecute on apps.fnd_profile to ' || monuser;
+				--dbms_output.put_line('granting permissions for config and compliance pack to ' || monuser);
+
+		execute immediate 'grant excecute on apps.fnd_web_config to  ' || monuser;
+
+		execute immediate 'grant excecute on apps.fnd_web_sec to  ' || monuser;
+
+		execute immediate 'grant excecute on apps.iby_creditcard_pkg to  ' || monuser;
+
+		execute immediate 'grant excecute on apps.iby_security_pkg to  ' || monuser;
+
+		execute immediate 'grant select on apps.iby_sys_security_options to  ' || monuser;
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.iby_sys_security_options for apps.iby_sys_security_options';
+
+		execute immediate 'grant select on apps.fnd_user_preferences to  ' || monuser;
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.fnd_user_preferences for apps.fnd_user_preferences';
+
+		execute immediate 'alter user '
+						|| monuser
+						|| ' enable editions';
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.fnd_web_config for apps.fnd_web_config';
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.iby_creditcard_pkg for apps.iby_creditcard_pkg';
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.iby_security_pkg for apps.iby_security_pkg';
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.fnd_web_sec for apps.fnd_web_sec';
+
+		execute immediate 'grant select on apps.fnd_profile_options to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_profile_option_values to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_profile_options_tl to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_user to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_application to  ' || monuser;
+
+		execute immediate 'grant select on apps.fnd_nodes to  ' || monuser;
+
+		execute immediate 'grant select on apps.hr_operating_units to  ' || monuser;
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.fnd_profile_options for apps.fnd_profile_options';
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.fnd_profile_option_values for apps.fnd_profile_option_values';
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.fnd_profile_options_tl for apps.fnd_profile_options_tl';
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.fnd_user for apps.fnd_user';
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.fnd_application for apps.fnd_application';
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.fnd_responsibility for apps.fnd_responsibility';
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.fnd_nodes for apps.fnd_nodes';
+
+		execute immediate 'create or replace synonym  '
+						|| monuser
+						|| '.hr_operating_units for apps.hr_operating_units';
+
+	end if;
 	execute immediate 'grant ' || dbrole || ' to ' || monuser;
 	SELECT COUNT(*) into number_Of_grants_given
 	FROM (SELECT DISTINCT table_name, PRIVILEGE
-		  FROM dba_role_privs rp 
-		  JOIN role_tab_privs rtp 
-			ON (rp.granted_role = rtp.role) 
+		  FROM dba_role_privs rp
+		  JOIN role_tab_privs rtp
+			ON (rp.granted_role = rtp.role)
 		  WHERE rp.grantee = UPPER(monuser) );
-	dbms_output.Put_line (number_Of_grants_given || ' Grants given to user ' || monuser); 
+	dbms_output.Put_line (number_Of_grants_given || ' Grants given to user ' || monuser);
 end;
 /
 exit;
- 
+
