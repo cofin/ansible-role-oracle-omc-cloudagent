@@ -89,5 +89,5 @@ omc_cloudagent_url_endpoint: "https://localhost.localdomain"
 omc_cloudagent_gateway_host: "localhost.localdomain"
 omc_cloudagent_gateway_port: "8080"
 omc_cloudagent_additional_gateways: "localhost.localdomain"
-omc_cloudagent_reinstall_agent: 'yes'
+omc_cloudagent_reinstall_agent: yes
 omc_cloudagent_cpu_throttle_percentage: 5
