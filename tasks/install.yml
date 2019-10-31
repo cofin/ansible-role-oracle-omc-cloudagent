@@ -40,7 +40,7 @@
       set_fact:
         omc_cloudagent_installed: yes
   when:
-    - (existing_omc_install.stat.exists == False or omc_cloudagent_reinstall_agent == True)
+    - (existing_omc_install.stat.exists == False or omc_cloudagent_reinstall_agent == 'yes')
 - name: ensure installed agent is running and configured to start at boot
   block:
     - name: Copy templated initialization script
@@ -62,7 +62,7 @@
         delay: 5 # No wait before first check (sec)
         timeout: 5 # Stop checking after timeout (sec)
       with_items:
-        - "{{ omc_cloudagent_port }}"
+        - "{{ omc_cloudagent_agent_port }}"
     - set_fact:
         omc_cloudagent_enabled: yes
   when:
