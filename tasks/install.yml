@@ -32,7 +32,7 @@
       become_user: "{{ omc_cloudagent_user }}"
 
     - name: executing root.sh configuration script
-      shell: "{{ omc_agent_base_dir }}/core/{{ omc_agent_version }}/root.sh"
+      shell: "{{ omc_cloudagent_install_dir }}/core/{{ omc_agent_version }}/root.sh"
       become: yes
       become_user: root
 
