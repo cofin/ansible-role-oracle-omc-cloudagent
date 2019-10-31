@@ -39,7 +39,7 @@
     - name: locate root.sh file for post-installation
       shell:
         cmd: |
-          ps -fu {{ target.app.os_user }} | grep -v omc | grep -v PID | awk '{print $2}'
+          find -L "{{omc_cloudagent_install_dir}}" -name "root.sh" | head -1
       register: find_root_sh
     - name: executing root.sh configuration script
       shell: |
