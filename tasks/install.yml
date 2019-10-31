@@ -25,20 +25,46 @@
 - name: when there is no existing installation or re-install has been set to true
   block:
     - name: installing omc cloudagent
-      shell: sh {{ omc_cloudagent_install_cmd }}
+      shell: |
+        sh {{ omc_cloudagent_install_cmd }}
+      args:
+        chdir: "{{ omc_cloudagent_stage_dir }}"
+      register: install_omc_cloudagent
+      become: yes
+      become_user: "{{ omc_cloudagent_user }}"
+      failed_when:
+        - "install_omc_cloudagent.rc is defined"
+        - "install_omc_cloudagent.rc > 0"
+
+    - name: locate root.sh file for post-installation
+      shell:
+        cmd: |
+          ps -fu {{ target.app.os_user }} | grep -v omc | grep -v PID | awk '{print $2}'
+      register: find_root_sh
+    - name: executing root.sh configuration script
+      shell: |
+        sh {{item}}
       args:
         chdir: "{{ omc_cloudagent_stage_dir }}"
       become: yes
-      become_user: "{{ omc_cloudagent_user }}"
-
-    - name: executing root.sh configuration script
-      shell: "{{ omc_cloudagent_install_dir }}/core/{{ omc_agent_version }}/root.sh"
-      become: yes
       become_user: root
+      register: execute_root_script
+      with_items: "{{ find_root_sh.stdout_lines }}"
+      failed_when:
+        - "execute_root_script.rc is defined"
+        - "execute_root_script.rc > 0"
+      when:
+        - "install_omc_cloudagent.rc is defined"
+        - "install_omc_cloudagent.rc == 0"
 
     - name: set flag to indicate this block was successful
       set_fact:
         omc_cloudagent_installed: yes
+      when:
+        - "install_omc_cloudagent.rc is defined"
+        - "install_omc_cloudagent.rc == 0"
+        - "execute_root_script.rc is defined"
+        - "execute_root_script.rc == 0"
   when:
     - (existing_omc_install.stat.exists == False or omc_cloudagent_reinstall_agent == 'yes')
 - name: ensure installed agent is running and configured to start at boot
