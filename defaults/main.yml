@@ -9,7 +9,8 @@ omc_cloudagent_stage_dir: "/tmp/ansible-omc-cloudagent"
 omc_cloudagent_software_url: "https://storage.us2.oraclecloud.com/v1/Storage-a511425/omcprodglobal/cloudagent/linux.x64/latest/cloudagent_linux.x64.zip"
 omc_cloudagent_install_dir: "/opt/oracle/omc/agent"
 omc_cloudagent_deploy_apm: no
-omc_cloudagent_databases:
+omc_cloudagent_ebs_monitored:
+omc_cloudagent_databases_monitored:
   - {
     oracle_home: "",
     grid_home: "/u01/app/12.1.0.2/grid",
@@ -54,7 +55,7 @@ omc_cloudagent_users:
       - { limit_type: "soft", limit_item: "memlock", value: unlimited }
       - { limit_type: "hard", limit_item: "memlock", value: unlimited }
 
-omc_cloudagent_permissions:
+omc_cloudagent_default_permissions:
   files:
     - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/yum.log*", permissions: "r"}
     - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/messages*", permissions: "r"}
@@ -91,3 +92,5 @@ omc_cloudagent_gateway_port: "8080"
 omc_cloudagent_additional_gateways: "localhost.localdomain"
 omc_cloudagent_reinstall_agent: yes
 omc_cloudagent_cpu_throttle_percentage: 5
+omc_cloudagent_db_user: "OMC_MON"
+omc_cloudagent_db_password: "P4ssw0rd"

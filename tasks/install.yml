@@ -26,7 +26,7 @@
   shell: |
     sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli stop agent
   become: yes
-  become_user: "{{omc_cloudagent_user}}"
+  become_user: "{{existing_omc_install.stat.pw_name}}"
   ignore_errors: yes
   when:
     - (existing_omc_install.stat.exists == True and omc_cloudagent_reinstall_agent == 'yes')
