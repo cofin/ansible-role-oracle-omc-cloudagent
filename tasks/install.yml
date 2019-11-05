@@ -22,6 +22,15 @@
     path: "{{ omc_cloudagent_install_dir }}/agent_inst/bin/omcli"
   register: existing_omc_install
 
+- name: make sure the agent is down
+  shell: |
+    sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli stop agent
+  become: yes
+  become_user: "{{omc_cloudagent_user}}"
+  ignore_errors: yes
+  when:
+    - (existing_omc_install.stat.exists == True and omc_cloudagent_reinstall_agent == 'yes')
+
 - name: when there is no existing installation or re-install has been set to true
   block:
     - name: installing omc cloudagent
