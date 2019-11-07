@@ -1,0 +1,16 @@
+---
+- name: copy script
+  copy:
+    src: "{{role_path}}/files/grantPrivileges.sql"
+    dest: "{{ omc_cloudagent_stage_dir }}"
+    owner: "omc_cloudagent_user"
+    group: "omc_cloudagent_group"
+    mode: 0744
+  tags: install
+- name: deploy OMC user for defined databases
+  include_tasks: set_db_facts.yml
+  loop: "{{ omc_cloudagent_databases_monitored }}"
+# - name: removing script
+#   file:
+#     path: "{{ omc_cloudagent_stage_dir }}"
+#     state: absent
