@@ -11,15 +11,7 @@ omc_cloudagent_install_dir: "/opt/oracle/omc/agent"
 omc_cloudagent_deploy_apm: no
 omc_cloudagent_ebs_monitored:
 omc_cloudagent_databases_monitored:
-  - {
-    oracle_home: "",
-    grid_home: "/u01/app/12.1.0.2/grid",
-    service: "",
-    host: "",
-    port: "",
-    system_password: "",
-    user: ""
-  }
+  - { db_name: "dbatools" }
 
 # Create a group for every user and make that their primary group
 omc_cloudagent_users_create_per_user_group: yes
@@ -57,18 +49,62 @@ omc_cloudagent_users:
 
 omc_cloudagent_default_permissions:
   files:
-    - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/yum.log*", permissions: "r"}
-    - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/messages*", permissions: "r"}
-    - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/cron*", permissions: "r"}
-    - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/audit/audit*", permissions: "r"}
-    - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/maillog*", permissions: "r"}
-    - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/secure*", permissions: "r"}
-    - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/sa", permissions: "rx"}
-    - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/sa/*", permissions: "rx"}
+    - {
+        user: "{{omc_cloudagent_users.0.username}}",
+        path: "/var/log/yum.log*",
+        permissions: "r",
+      }
+    - {
+        user: "{{omc_cloudagent_users.0.username}}",
+        path: "/var/log/messages*",
+        permissions: "r",
+      }
+    - {
+        user: "{{omc_cloudagent_users.0.username}}",
+        path: "/var/log/cron*",
+        permissions: "r",
+      }
+    - {
+        user: "{{omc_cloudagent_users.0.username}}",
+        path: "/var/log/audit/audit*",
+        permissions: "r",
+      }
+    - {
+        user: "{{omc_cloudagent_users.0.username}}",
+        path: "/var/log/maillog*",
+        permissions: "r",
+      }
+    - {
+        user: "{{omc_cloudagent_users.0.username}}",
+        path: "/var/log/secure*",
+        permissions: "r",
+      }
+    - {
+        user: "{{omc_cloudagent_users.0.username}}",
+        path: "/var/log/sa",
+        permissions: "rx",
+      }
+    - {
+        user: "{{omc_cloudagent_users.0.username}}",
+        path: "/var/log/sa/*",
+        permissions: "rx",
+      }
   defaults:
-    - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/audit", permissions: "r"}
-    - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log", permissions: "r"}
-    - {user: "{{omc_cloudagent_users.0.username}}", path: "/var/log/sa", permissions: "rx"}
+    - {
+        user: "{{omc_cloudagent_users.0.username}}",
+        path: "/var/log/audit",
+        permissions: "r",
+      }
+    - {
+        user: "{{omc_cloudagent_users.0.username}}",
+        path: "/var/log",
+        permissions: "r",
+      }
+    - {
+        user: "{{omc_cloudagent_users.0.username}}",
+        path: "/var/log/sa",
+        permissions: "rx",
+      }
 
   # orignal
   # - setfacl -m u:oracle:r /var/log/yum.log*
