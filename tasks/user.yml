@@ -64,7 +64,13 @@
     create: true
   when: omc_cloudagent_users_create_homedirs and item.profile is defined
   with_items: "{{ omc_cloudagent_users }}"
-
+- name: debug details
+  debug:
+    msg: "{{ item.0.username }} | {{ item.1.limit_type }} | {{ item.1.limit_item }} | {{item.1.value}}"
+  with_subelements:
+    - "{{ omc_cloudagent_users }}"
+    - ulimits
+    - skip_missing: yes
 - name: Configure ulimits for users
   become: yes
   become_user: root
