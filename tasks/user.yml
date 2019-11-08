@@ -47,7 +47,7 @@
     key: "{{ item.1 }}"
     path: "{{ item.0.home | default('/home/' + item.0.username) }}/{{ authorized_keys_file }}"
   with_subelements:
-    - "{{ omc_cloudagent_users }}"
+    - omc_cloudagent_users"
     - ssh_key
     - skip_missing: yes
   tags: ["users", "configuration"]
@@ -69,12 +69,14 @@
   become: yes
   become_user: root
   pam_limits:
-    domain: "{{ omc_cloudagent_user}}"
-    limit_type: "{{ item.limit_type }}"
-    limit_item: "{{ item.limit_item }}"
-    value: "{{item.value}}"
-  with_items:
-    - "{{ omc_cloudagent_users.0.ulimits }}"
+    domain: "{{ item.0.username }}"
+    limit_type: "{{ item.1.limit_type }}"
+    limit_item: "{{ item.1.limit_item }}"
+    value: "{{item.1.value}}"
+  with_subelements:
+    - omc_cloudagent_users
+    - ulimits
+    - skip_missing: yes
   register: omc_cloudagent_ulimits
   notify: "reload sysctl config"
   tags: ["users", "configuration"]
