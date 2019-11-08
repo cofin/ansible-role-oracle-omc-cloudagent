@@ -25,6 +25,7 @@
   debug:
     msg: "{{existing_omc_install}}"
 
+- name: "found existing OMC installation"
   block:
     - name: make sure the agent is down
       shell: |
@@ -35,7 +36,7 @@
   when:
     - (existing_omc_install.stat.exists == True and omc_cloudagent_reinstall_agent == 'yes' and existing_omc_install.stat.pw_name is defined)
 
-- name: when there is no existing installation or re-install has been set to true
+- name: Preparing to install agent
   block:
     - name: installing omc cloudagent
       shell: |
