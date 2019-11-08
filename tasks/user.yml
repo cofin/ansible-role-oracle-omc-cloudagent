@@ -64,25 +64,17 @@
     create: true
   when: omc_cloudagent_users_create_homedirs and item.profile is defined
   with_items: "{{ omc_cloudagent_users }}"
-- name: debug details
-  debug:
-    msg: "{{ item.0.username }} | {{ item.1.limit_type }} | {{ item.1.limit_item }} | {{item.1.value}}"
-  with_subelements:
-    - "{{ omc_cloudagent_users }}"
-    - ulimits
-    - skip_missing: yes
+
 - name: Configure ulimits for users
   become: yes
   become_user: root
   pam_limits:
-    domain: "{{ item.0.username }}"
-    limit_type: "{{ item.1.limit_type }}"
-    limit_item: "{{ item.1.limit_item }}"
-    value: "{{item.1.value}}"
-  with_subelements:
-    - "{{ omc_cloudagent_users }}"
-    - ulimits
-    - skip_missing: yes
+    domain: "{{ omc_cloudagent_user}}"
+    limit_type: "{{ item.limit_type }}"
+    limit_item: "{{ item.limit_item }}"
+    value: "{{item.value}}"
+  with_items:
+    - "{{ omc_cloudagent_users.0.ulimits }}"
   register: omc_cloudagent_ulimits
   notify: "reload sysctl config"
   tags: ["users", "configuration"]
