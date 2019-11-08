@@ -1,5 +1,7 @@
 ---
 - name: Creating groups
+  become: yes
+  become_user: root
   group:
     name: "{{ item.name }}"
     gid: "{{ item.gid | default(omit) }}"
@@ -8,6 +10,8 @@
   tags: ["users", "groups", "configuration"]
 
 - name: Per-user group creation
+  become: yes
+  become_user: root
   group:
     name: "{{ item.username }}"
     gid: "{{ item.gid | default(item.uid) | default(omit) }}"
@@ -16,6 +20,8 @@
   tags: ["users", "configuration"]
 
 - name: User creation
+  become: yes
+  become_user: root
   user:
     name: "{{ item.username }}"
     group: "{{ item.group | default(item.username if omc_cloudagent_users_create_per_user_group else omc_cloudagent_users_group) }}"
@@ -34,6 +40,8 @@
   tags: ["users", "configuration"]
 
 - name: SSH keys
+  become: yes
+  become_user: root
   authorized_key:
     user: "{{ item.0.username }}"
     key: "{{ item.1 }}"
@@ -45,6 +53,8 @@
   tags: ["users", "configuration"]
 
 - name: Setup user profiles
+  become: yes
+  become_user: root
   blockinfile:
     block: "{{ item.profile }}"
     dest: "{{ item.home | default('/home/' + item.username) }}/.profile"
@@ -56,6 +66,8 @@
   with_items: "{{ omc_cloudagent_users }}"
 
 - name: Configure ulimits for users
+  become: yes
+  become_user: root
   pam_limits:
     domain: "{{ item.0.username }}"
     limit_type: "{{ item.1.limit_type }}"
