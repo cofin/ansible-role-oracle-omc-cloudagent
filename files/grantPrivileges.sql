@@ -734,6 +734,105 @@ begin
 						|| '.hr_operating_units for apps.hr_operating_units';
 
 	end if;
+
+	-- compliance grants
+	EXECUTE IMMEDIATE 'grant select on dba_tab_privs to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_profiles to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_role_privs to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on sys.link$ to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_users to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_users_with_defpwd to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_tab_privs to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_profiles to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_role_privs to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on sys.link$ to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_users to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_users_with_defpwd to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_db_links to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on v_$controlfile to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on v_$log to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_sys_privs to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_tables to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_external_tables to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_objects to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_sys_privs to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_roles to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on v_$encrypted_tablespaces to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on v_$tablespace to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_encrypted_columns to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_constraints to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_tab_privs to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_profiles to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_role_privs to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on sys.link$ to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_users to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_users_with_defpwd to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_db_links to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on v_$controlfile to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on v_$log to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_sys_privs to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_tables to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_external_tables to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_objects to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_sys_privs to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_roles to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on v_$encrypted_tablespaces to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on v_$tablespace to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_encrypted_columns to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_constraints to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_proxies to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_stmt_audit_opts to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_priv_audit_opts to ' || monuser;
+
+	EXECUTE IMMEDIATE 'grant select on dba_obj_audit_opts to ' || monuser;
+
+
 	execute immediate 'grant ' || dbrole || ' to ' || monuser;
 	SELECT COUNT(*) into number_Of_grants_given
 	FROM (SELECT DISTINCT table_name, PRIVILEGE
