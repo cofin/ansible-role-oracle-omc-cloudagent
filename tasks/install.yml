@@ -21,15 +21,18 @@
   stat:
     path: "{{ omc_cloudagent_install_dir }}/agent_inst/bin/omcli"
   register: existing_omc_install
+- name: output for debug
+  msg: "{{existing_omc_install}}"
 
-- name: make sure the agent is down
-  shell: |
-    sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli stop agent
-  become: yes
-  become_user: "{{existing_omc_install.stat.pw_name}}"
-  ignore_errors: yes
+  block:
+    - name: make sure the agent is down
+      shell: |
+        sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli stop agent
+      become: yes
+      become_user: "{{existing_omc_install.stat.pw_name}}"
+      ignore_errors: yes
   when:
-    - (existing_omc_install.stat.exists == True and omc_cloudagent_reinstall_agent == 'yes')
+    - (existing_omc_install.stat.exists == True and omc_cloudagent_reinstall_agent == 'yes' and existing_omc_install.stat.pw_name is defined)
 
 - name: when there is no existing installation or re-install has been set to true
   block:
