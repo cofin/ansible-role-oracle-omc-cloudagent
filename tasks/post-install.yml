@@ -1,17 +1,24 @@
 ---
-- name: ensure agent is running the latest version
-  shell: |
-    sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli upgrade agent
-  become: yes
-  become_user: "{{omc_cloudagent_user}}"
-  ignore_errors: yes
+# - name: ensure agent is running the latest version
+#   shell: |
+#     sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli upgrade agent
+#   become: yes
+#   become_user: "{{omc_cloudagent_user}}"
+#   ignore_errors: yes
 
 - name: ensure agent is running
   shell: |
     sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli start agent
   become: yes
   become_user: "{{omc_cloudagent_user}}"
-  ignore_errors: yes
+  register: agent_startup
+  failed_when:
+    - "agent_startup.rc is defined"
+    - "agent_startup.rc > 0"
+  changed_when:
+    - "agent_startup.rc is defined"
+    - "agent_startup.rc == 0"
+    - "'Agent is already running' not in agent_startup.stdout"
 
 - name: set default file acl permissions for cloudagent user
   shell: "setfacl -d -m u:{{item.user}}:{{item.permissions}} {{ item.path }}"
