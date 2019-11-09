@@ -1,13 +1,27 @@
 ---
+- name: ensure agent is running the latest version
+  shell: |
+    sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli upgrade agent
+  become: yes
+  become_user: "{{omc_cloudagent_user}}"
+  ignore_errors: yes
+
+- name: ensure agent is running
+  shell: |
+    sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli start agent
+  become: yes
+  become_user: "{{omc_cloudagent_user}}"
+  ignore_errors: yes
+
 - name: set default file acl permissions for cloudagent user
   shell: "setfacl -d -m u:{{item.user}}:{{item.permissions}} {{ item.path }}"
-  with_items: "{{ omc_cloudagent_permissions.defaults }}"
+  with_items: "{{ omc_cloudagent_default_permissions.defaults }}"
   become: yes
   become_user: root
 
 - name: set ACL permissions for cloudagent user on existing files
   shell: "setfacl -m u:{{item.user}}:{{item.permissions}} {{ item.path }}"
-  with_items: "{{ omc_cloudagent_permissions.files }}"
+  with_items: "{{ omc_cloudagent_default_permissions.files }}"
   become: yes
   become_user: root
 
