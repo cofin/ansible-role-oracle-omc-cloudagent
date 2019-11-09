@@ -1,15 +1,2 @@
 ---
 # vars file for oracle-omc-cloudagent
-omc_cloudagent_omc_url: "https://"
-omc_cloudagent_tenancy_id: ""
-omc_cloudagent_registration_key:
-omc_cloudagent_oracle_databases:
-  - {
-    oracle_home: "",
-    grid_home: "/u01/app/12.1.0.2/grid",
-    service: "",
-    host: "",
-    port: "",
-    system_password: "",
-    user: ""
-  }
