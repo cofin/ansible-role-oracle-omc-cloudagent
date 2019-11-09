@@ -23,20 +23,35 @@
 - name: set default file acl permissions for cloudagent user
   shell: "setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
   with_items: "{{ omc_cloudagent_default_permissions.defaults }}"
+  register: agent_default_permissions
   become: yes
   become_user: root
+  failed_when:
+    - agent_default_permissions.rc is defined
+    - agent_default_permissions.rc > 0
+    - "'No such file or directory' not  in agent_default_permissions.stdout"
 
 - name: set ACL permissions for cloudagent user on existing files
   shell: "setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
   with_items: "{{ omc_cloudagent_default_permissions.files }}"
+  register: agent_file_permissions
   become: yes
   become_user: root
+  failed_when:
+    - agent_file_permissions.rc is defined
+    - agent_file_permissions.rc > 0
+    - "'No such file or directory' not  in agent_file_permissions.stdout"
 
 - name: set user defined default file acl permissions for cloudagent user
   shell: "setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
   with_items: "{{ omc_cloudagent_permissions.defaults }}"
   become: yes
   become_user: root
+  register: user_default_permissions
+  failed_when:
+    - user_default_permissions.rc is defined
+    - user_default_permissions.rc > 0
+    - "'No such file or directory' not  in user_default_permissions.stdout"
   when:
     - omc_cloudagent_permissions is defined
     - omc_cloudagent_permissions.defaults is defined
@@ -46,9 +61,15 @@
   with_items: "{{ omc_cloudagent_permissions.files }}"
   become: yes
   become_user: root
+  register: user_file_permissions
   when:
     - omc_cloudagent_permissions is defined
     - omc_cloudagent_permissions.files is defined
+  failed_when:
+    - user_file_permissions.rc is defined
+    - user_file_permissions.rc > 0
+    - "'No such file or directory' not  in user_file_permissions.stdout"
+
 - name: set CPU throttle on cloud agent to ensure it doesn't consume too much CPU
   shell: |
     sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli setproperty agent -allow_new -name _targetedCpuPct -value {{omc_cloudagent_cpu_throttle_percentage}}
