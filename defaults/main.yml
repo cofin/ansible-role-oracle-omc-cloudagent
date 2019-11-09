@@ -49,62 +49,18 @@ omc_cloudagent_users:
 
 omc_cloudagent_default_permissions:
   files:
-    - {
-        user: "{{omc_cloudagent_users.0.username}}",
-        path: "/var/log/yum.log*",
-        permissions: "r",
-      }
-    - {
-        user: "{{omc_cloudagent_users.0.username}}",
-        path: "/var/log/messages*",
-        permissions: "r",
-      }
-    - {
-        user: "{{omc_cloudagent_users.0.username}}",
-        path: "/var/log/cron*",
-        permissions: "r",
-      }
-    - {
-        user: "{{omc_cloudagent_users.0.username}}",
-        path: "/var/log/audit/audit*",
-        permissions: "r",
-      }
-    - {
-        user: "{{omc_cloudagent_users.0.username}}",
-        path: "/var/log/maillog*",
-        permissions: "r",
-      }
-    - {
-        user: "{{omc_cloudagent_users.0.username}}",
-        path: "/var/log/secure*",
-        permissions: "r",
-      }
-    - {
-        user: "{{omc_cloudagent_users.0.username}}",
-        path: "/var/log/sa",
-        permissions: "rx",
-      }
-    - {
-        user: "{{omc_cloudagent_users.0.username}}",
-        path: "/var/log/sa/*",
-        permissions: "rx",
-      }
+    - { path: "/var/log/yum.log*", permissions: "r" }
+    - { path: "/var/log/messages*", permissions: "r" }
+    - { path: "/var/log/cron*", permissions: "r" }
+    - { path: "/var/log/audit/audit*", permissions: "r" }
+    - { path: "/var/log/maillog*", permissions: "r" }
+    - { path: "/var/log/secure*", permissions: "r" }
+    - { path: "/var/log/sa", permissions: "rx" }
+    - { path: "/var/log/sa/*", permissions: "rx" }
   defaults:
-    - {
-        user: "{{omc_cloudagent_users.0.username}}",
-        path: "/var/log/audit",
-        permissions: "r",
-      }
-    - {
-        user: "{{omc_cloudagent_users.0.username}}",
-        path: "/var/log",
-        permissions: "r",
-      }
-    - {
-        user: "{{omc_cloudagent_users.0.username}}",
-        path: "/var/log/sa",
-        permissions: "rx",
-      }
+    - { path: "/var/log/audit", permissions: "r" }
+    - { path: "/var/log", permissions: "r" }
+    - { path: "/var/log/sa", permissions: "rx" }
 
   # orignal
   # - setfacl -m u:oracle:r /var/log/yum.log*

@@ -21,19 +21,19 @@
     - "'Agent is already running' not in agent_startup.stdout"
 
 - name: set default file acl permissions for cloudagent user
-  shell: "setfacl -d -m u:{{item.user}}:{{item.permissions}} {{ item.path }}"
+  shell: "setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
   with_items: "{{ omc_cloudagent_default_permissions.defaults }}"
   become: yes
   become_user: root
 
 - name: set ACL permissions for cloudagent user on existing files
-  shell: "setfacl -m u:{{item.user}}:{{item.permissions}} {{ item.path }}"
+  shell: "setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
   with_items: "{{ omc_cloudagent_default_permissions.files }}"
   become: yes
   become_user: root
 
 - name: set user defined default file acl permissions for cloudagent user
-  shell: "setfacl -d -m u:{{item.user}}:{{item.permissions}} {{ item.path }}"
+  shell: "setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
   with_items: "{{ omc_cloudagent_permissions.defaults }}"
   become: yes
   become_user: root
@@ -42,7 +42,7 @@
     - omc_cloudagent_permissions.defaults is defined
 
 - name: set user defined ACL permissions for cloudagent user on existing files
-  shell: "setfacl -m u:{{item.user}}:{{item.permissions}} {{ item.path }}"
+  shell: "setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
   with_items: "{{ omc_cloudagent_permissions.files }}"
   become: yes
   become_user: root
