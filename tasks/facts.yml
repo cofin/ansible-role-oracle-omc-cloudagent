@@ -15,4 +15,4 @@
     omc_cloudagent_user: "{{omc_cloudagent_users.0.username }}"
     omc_cloudagent_group: "{{omc_cloudagent_users.0.group }}"
     omc_cloudagent_software: "cloudagent_linux.x64.zip"
-    omc_cloudagent_ulimts: "{{omc_cloudagent_users.0.ulimts }}"
+    omc_cloudagent_ulimts: "{{omc_cloudagent_users.0.ulimits }}"
