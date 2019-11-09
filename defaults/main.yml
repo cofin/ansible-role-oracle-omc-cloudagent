@@ -41,7 +41,7 @@ omc_cloudagent_users:
     name: Oracle OMC Monitoring User
     group: svc-omc
     uid: 543198
-    ulimts:
+    ulimits:
       - { limit_type: "-", limit_item: "nofile", value: 400000 }
       - { limit_type: "-", limit_item: "nproc", value: 400000 }
       - { limit_type: "soft", limit_item: "memlock", value: unlimited }
