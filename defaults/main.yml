@@ -50,7 +50,8 @@ omc_cloudagent_users:
 omc_cloudagent_default_permissions:
   files:
     - { path: "/var/log/yum.log*", permissions: "r" }
-    - { path: "/var/log/messages*", permissions: "r" }
+    - { path: "/var/log/yum.log*", permissions: "r" }
+    - { path: "/var/log", permissions: "rx" }
     - { path: "/var/log/cron*", permissions: "r" }
     - { path: "/var/log/audit/audit*", permissions: "r" }
     - { path: "/var/log/maillog*", permissions: "r" }
@@ -58,8 +59,8 @@ omc_cloudagent_default_permissions:
     - { path: "/var/log/sa", permissions: "rx" }
     - { path: "/var/log/sa/*", permissions: "rx" }
   defaults:
-    - { path: "/var/log/audit", permissions: "r" }
-    - { path: "/var/log", permissions: "r" }
+    - { path: "/var/log/audit", permissions: "rx" }
+    - { path: "/var/log", permissions: "rx" }
     - { path: "/var/log/sa", permissions: "rx" }
 
   # orignal
