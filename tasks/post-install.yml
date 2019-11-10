@@ -29,7 +29,7 @@
   failed_when:
     - agent_default_permissions.rc is defined
     - agent_default_permissions.rc > 0
-    - "'No such file or directory' not  in agent_default_permissions.stdout"
+    - "'No such file or directory' not  in agent_default_permissions.stderr"
 
 - name: set ACL permissions for cloudagent user on existing files
   shell: "setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
@@ -40,7 +40,7 @@
   failed_when:
     - agent_file_permissions.rc is defined
     - agent_file_permissions.rc > 0
-    - "'No such file or directory' not  in agent_file_permissions.stdout"
+    - "'No such file or directory' not  in agent_file_permissions.stderr"
 
 - name: set user defined default file acl permissions for cloudagent user
   shell: "setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
@@ -51,7 +51,7 @@
   failed_when:
     - user_default_permissions.rc is defined
     - user_default_permissions.rc > 0
-    - "'No such file or directory' not  in user_default_permissions.stdout"
+    - "'No such file or directory' not  in user_default_permissions.stderr"
   when:
     - omc_cloudagent_permissions is defined
     - omc_cloudagent_permissions.defaults is defined
@@ -68,7 +68,7 @@
   failed_when:
     - user_file_permissions.rc is defined
     - user_file_permissions.rc > 0
-    - "'No such file or directory' not  in user_file_permissions.stdout"
+    - "'No such file or directory' not  in user_file_permissions.stderr"
 
 - name: set CPU throttle on cloud agent to ensure it doesn't consume too much CPU
   shell: |
