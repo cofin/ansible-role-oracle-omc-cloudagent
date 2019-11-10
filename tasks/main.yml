@@ -12,3 +12,7 @@
   include_tasks: install.yml
 - name: execute post-installation steps
   include_tasks: post-install.yml
+- name: execute database steps
+  include_tasks: db-deploy.yml
+  when:
+    - "omc_cloudagent_databases_monitored is defined"
