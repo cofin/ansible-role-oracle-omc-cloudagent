@@ -28,23 +28,29 @@
   become_user: root
   changed_when:
     - "'No such file or directory' not  in agent_default_permissions.stderr"
+    - "'Operation not supported' not  in agent_default_permissions.stderr"
+
   failed_when:
     - agent_default_permissions.rc is defined
     - agent_default_permissions.rc > 0
     - "'No such file or directory' not  in agent_default_permissions.stderr"
+    - "'Operation not supported' not  in agent_default_permissions.stderr"
 
 - name: set ACL permissions for cloudagent user on existing files
-  shell: "setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
+  shell: "setfacl -R -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
   with_items: "{{ omc_cloudagent_default_permissions.files }}"
   register: agent_file_permissions
   become: yes
   become_user: root
   changed_when:
     - "'No such file or directory' not  in agent_file_permissions.stderr"
+    - "'Operation not supported' not  in agent_file_permissions.stderr"
+
   failed_when:
     - agent_file_permissions.rc is defined
     - agent_file_permissions.rc > 0
     - "'No such file or directory' not  in agent_file_permissions.stderr"
+    - "'Operation not supported' not  in agent_file_permissions.stderr"
 
 - name: set user defined default file acl permissions for cloudagent user
   shell: "setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
@@ -56,14 +62,17 @@
     - user_default_permissions.rc is defined
     - user_default_permissions.rc > 0
     - "'No such file or directory' not  in user_default_permissions.stderr"
+    - "'Operation not supported' not  in user_default_permissions.stderr"
+
   changed_when:
     - "'No such file or directory' not  in user_default_permissions.stderr"
+    - "'Operation not supported' not  in user_default_permissions.stderr"
   when:
     - omc_cloudagent_permissions is defined
     - omc_cloudagent_permissions.defaults is defined
 
 - name: set user defined ACL permissions for cloudagent user on existing files
-  shell: "setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
+  shell: "setfacl -R -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
   with_items: "{{ omc_cloudagent_permissions.files }}"
   become: yes
   become_user: root
@@ -73,10 +82,12 @@
     - omc_cloudagent_permissions.files is defined
   changed_when:
     - "'No such file or directory' not  in user_file_permissions.stderr"
+    - "'Operation not supported' not  in user_file_permissions.stderr"
   failed_when:
     - user_file_permissions.rc is defined
     - user_file_permissions.rc > 0
     - "'No such file or directory' not  in user_file_permissions.stderr"
+    - "'Operation not supported' not  in user_file_permissions.stderr"
 
 - name: set CPU throttle on cloud agent to ensure it doesn't consume too much CPU
   shell: |
