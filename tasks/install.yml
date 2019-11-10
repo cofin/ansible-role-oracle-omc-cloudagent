@@ -21,9 +21,9 @@
   stat:
     path: "{{ omc_cloudagent_install_dir }}/agent_inst/bin/omcli"
   register: existing_omc_install
-- name: output for debug
-  debug:
-    msg: "{{existing_omc_install}}"
+# - name: output for debug
+#   debug:
+#     msg: "{{existing_omc_install}}"
 
 - name: "found existing OMC installation"
   block:
