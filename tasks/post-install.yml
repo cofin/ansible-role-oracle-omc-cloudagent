@@ -37,7 +37,8 @@
     - "'Operation not supported' not  in agent_default_permissions.stderr"
 
 - name: set ACL permissions for cloudagent user on existing files
-  shell: "setfacl -R -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
+  shell: |
+    find  {{item.path}} -xdev -exec setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
   with_items: "{{ omc_cloudagent_default_permissions.files }}"
   register: agent_file_permissions
   become: yes
@@ -72,7 +73,8 @@
     - omc_cloudagent_permissions.defaults is defined
 
 - name: set user defined ACL permissions for cloudagent user on existing files
-  shell: "setfacl -R -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
+  shell: |
+    find  {{item.path}} -xdev -exec setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
   with_items: "{{ omc_cloudagent_permissions.files }}"
   become: yes
   become_user: root
