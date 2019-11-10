@@ -10,6 +10,8 @@
 - name: deploy OMC user for defined databases
   include_tasks: set_db_facts.yml
   loop: "{{ omc_cloudagent_databases_monitored }}"
+  loop_control:
+    loop_var: oracle_db
 # - name: removing script
 #   file:
 #     path: "{{ omc_cloudagent_stage_dir }}"

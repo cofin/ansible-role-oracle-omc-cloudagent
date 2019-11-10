@@ -1,13 +1,13 @@
 - name: identify database owner
   environment:
-    ORACLE_DB: "{{ item.oracle_db }}"
+    ORACLE_DB: "{{ oracle_db }}"
   shell: |
     ps aux | grep pmon | grep -v grep | grep $ORACLE_DB | awk '{print $1}'
   register: oracle_db_sid_owner
 - name: database process not found.  skipping deployment
   debug:
     msg: |
-      "Running database process was not found for {{item.oracle_db}}.  Skipping deployment"
+      "Running database process was not found for {{oracle_db}}.  Skipping deployment"
   when:
     - "(oracle_db_sid_owner.rc is defined and oracle_db_sid_owner.rc > 0)"
     - "or (oracle_db_sid_owner.stdout is defined and oracle_db_sid_owner.stdout == '')"
@@ -19,12 +19,12 @@
         oracle_db_owner: "{{oracle_db_sid_owner.stdout}}"
     - name: creating user and/or refreshing privs for defined databases
       environment:
-        ORACLE_DB: "{{ item.oracle_sid }}"
+        ORACLE_DB: "{{ oracle_db }}"
         ORAENV_ASK: "NO"
       shell: |
         export ORACLE_SID=$(ps -e -o command | grep pmon | grep -v grep | cut -d '_' -f3 | grep $ORACLE_DB | head -1)
         . oraenv
-        $ORACLE_HOME/bin/sqlplus -S / as sysdba @./{{ script_name }} {{ omc_mon_user }} {{ omc_mon_user_pass }}
+        $ORACLE_HOME/bin/sqlplus -S / as sysdba @grantPrivileges.sql {{ omc_cloudagent_db_user }} {{ omc_cloudagent_db_password }}
       args:
         chdir: "{{ omc_cloudagent_stage_dir }}"
       become: yes
