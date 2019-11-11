@@ -22,7 +22,7 @@
 
 - name: set default file acl permissions for cloudagent user
   shell: |
-    find  {{item.path}} -maxdepth 2 -xdev -type d -exec setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
+    find  {{item.path}} -maxdepth 1 -xdev -type d -exec setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
   with_items: "{{ omc_cloudagent_default_permissions }}"
   register: agent_default_permissions
   become: yes
@@ -39,7 +39,7 @@
 
 - name: set ACL permissions for cloudagent user on existing files
   shell: |
-    find  {{item.path}} -xdev -exec setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
+    find  {{item.path}} -maxdepth 1 -xdev -exec setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
   with_items: "{{ omc_cloudagent_default_permissions }}"
   register: agent_file_permissions
   become: yes
@@ -56,7 +56,7 @@
 
 - name: set user defined default file acl permissions for cloudagent user
   shell: |
-    find  {{item.path}} -maxdepth 2 -xdev -type d -exec setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
+    find  {{item.path}} -maxdepth 1 -xdev -type d -exec setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
   with_items: "{{ omc_cloudagent_permissions }}"
   become: yes
   become_user: root
@@ -75,7 +75,7 @@
 
 - name: set user defined ACL permissions for cloudagent user on existing files
   shell: |
-    find  {{item.path}} -xdev -exec setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
+    find  {{item.path}} -maxdepth 1 -xdev -exec setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
   with_items: "{{ omc_cloudagent_permissions }}"
   become: yes
   become_user: root
