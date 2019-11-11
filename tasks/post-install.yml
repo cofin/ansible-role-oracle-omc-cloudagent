@@ -21,7 +21,8 @@
     - "'Agent is already running' not in agent_startup.stdout"
 
 - name: set default file acl permissions for cloudagent user
-  shell: "setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
+  shell: |
+    find  {{item.path}} -xdev -type d -exec setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
   with_items: "{{ omc_cloudagent_default_permissions }}"
   register: agent_default_permissions
   become: yes
@@ -54,7 +55,8 @@
     - "'Operation not supported' not  in agent_file_permissions.stderr"
 
 - name: set user defined default file acl permissions for cloudagent user
-  shell: "setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
+  shell: |
+    find  {{item.path}} -xdev -type d -exec setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
   with_items: "{{ omc_cloudagent_permissions }}"
   become: yes
   become_user: root
