@@ -1,9 +1,9 @@
 
 - name: identify database owner
   environment:
-    ORACLE_DB: "{{ oracle_db }}"
+    ORACLE_DB: "{{ oracle_db.db_name }}"
   shell: |
-    ps aux | grep pmon | grep -v grep | grep $ORACLE_DB | awk '{print $1}'
+    ps aux | grep pmon | grep -v grep | grep "$ORACLE_DB" | awk '{print $1}'
   register: oracle_db_sid_owner
 - name: "working with {{oracle_db}}"
   debug:
