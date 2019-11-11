@@ -58,6 +58,7 @@ declare
 	invoked_by_ita BOOLEAN;
 	sql_stmt varchar2 ( 100 ) := 'SELECT CDB from v$database';
 	-- added by Cody for EBS integration
+	is_db_ebs boolean;
 	ebs_tbl_cnt number;
     table_not_found EXCEPTION;
     PRAGMA exception_init ( table_not_found, -00942 );
