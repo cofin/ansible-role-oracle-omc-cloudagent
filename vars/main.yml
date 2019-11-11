@@ -1,2 +1,32 @@
 ---
 # vars file for oracle-omc-cloudagent
+# Create a group for every user and make that their primary group
+omc_cloudagent_users_create_per_user_group: yes
+# If we're not creating a per-user group, then this is the group all users
+# belong to
+# The default shell for a user if none is specified
+omc_cloudagent_users_default_shell: /bin/bash
+# Create home dirs for new users? Set this to false if you manage home
+# directories in some other way.
+omc_cloudagent_users_create_homedirs: yes
+omc_cloudagent_required_packages:
+  - bc
+  #- setarch
+  - jq
+
+
+omc_cloudagent_authorized_keys_file: ".ssh/authorized_keys"
+
+
+
+omc_cloudagent_default_permissions:
+  - { path: "/var/log/yum.log*", permissions: "r" }
+  - { path: "/var/log/yum.log*", permissions: "r" }
+  - { path: "/var/log", permissions: "rx" }
+  - { path: "/var/log/cron*", permissions: "r" }
+  - { path: "/var/log/audit/audit*", permissions: "r" }
+  - { path: "/var/log/maillog*", permissions: "r" }
+  - { path: "/var/log/secure*", permissions: "r" }
+  - { path: "/var/log/sa", permissions: "rx" }
+  - { path: "/var/log/sa/*", permissions: "rx" }
+  - { path: "/var/log/audit", permissions: "rx" }
