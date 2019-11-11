@@ -1,16 +1,20 @@
+
 - name: identify database owner
   environment:
     ORACLE_DB: "{{ oracle_db }}"
   shell: |
     ps aux | grep pmon | grep -v grep | grep $ORACLE_DB | awk '{print $1}'
   register: oracle_db_sid_owner
+- name: "working with {{oracle_db}}"
+  debug:
+    msg: |
+      {{oracle_db_sid_owner}}
 - name: database process not found.  skipping deployment
   debug:
     msg: |
       "Running database process was not found for {{oracle_db}}.  Skipping deployment"
   when:
-    - "(oracle_db_sid_owner.rc is defined and oracle_db_sid_owner.rc > 0)"
-    - "or (oracle_db_sid_owner.stdout is defined and oracle_db_sid_owner.stdout == '')"
+    - "(oracle_db_sid_owner.rc is defined and oracle_db_sid_owner.rc > 0) or (oracle_db_sid_owner.stdout is defined and oracle_db_sid_owner.stdout == '')"
 
 - name: deploy user
   block:
