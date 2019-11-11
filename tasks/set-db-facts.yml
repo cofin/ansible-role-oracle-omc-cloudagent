@@ -5,7 +5,7 @@
   shell: |
     ps aux | grep pmon | grep -v grep | grep "$ORACLE_DB" | awk '{print $1}'
   register: oracle_db_sid_owner
-- name: "working with {{oracle_db}}"
+- name: "working with {{oracle_db.db_name}}"
   debug:
     msg: |
       {{oracle_db_sid_owner}}
@@ -23,7 +23,7 @@
         oracle_db_owner: "{{oracle_db_sid_owner.stdout}}"
     - name: creating user and/or refreshing privs for defined databases
       environment:
-        ORACLE_DB: "{{ oracle_db }}"
+        ORACLE_DB: "{{oracle_db.db_name}}"
         ORAENV_ASK: "NO"
       shell: |
         export ORACLE_SID=$(ps -e -o command | grep pmon | grep -v grep | cut -d '_' -f3 | grep $ORACLE_DB | head -1)
