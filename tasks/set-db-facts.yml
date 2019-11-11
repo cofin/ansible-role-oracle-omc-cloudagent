@@ -1,18 +1,21 @@
 
 - name: identify database owner
+  run_once: yes
   environment:
     ORACLE_DB: "{{ oracle_db.db_name }}"
   shell: |
     ps aux | grep pmon | grep -v grep | grep "$ORACLE_DB" | awk '{print $1}'
   register: oracle_db_sid_owner
 - name: "working with {{oracle_db.db_name}}"
+  run_once: yes
   debug:
     msg: |
       {{oracle_db_sid_owner}}
 - name: database process not found.  skipping deployment
+  run_once: yes
   debug:
     msg: |
-      "Running database process was not found for {{oracle_db}}.  Skipping deployment"
+      "Running database process was not found for {{oracle_db.db_name}}.  Skipping deployment"
   when:
     - "(oracle_db_sid_owner.rc is defined and oracle_db_sid_owner.rc > 0) or (oracle_db_sid_owner.stdout is defined and oracle_db_sid_owner.stdout == '')"
 
@@ -21,6 +24,7 @@
     - name: set facts required for DB user deployment
       set_fact:
         oracle_db_owner: "{{oracle_db_sid_owner.stdout}}"
+      run_once: yes
     - name: creating user and/or refreshing privs for defined databases
       environment:
         ORACLE_DB: "{{oracle_db.db_name}}"
@@ -34,6 +38,7 @@
       #   chdir: "{{ omc_cloudagent_stage_dir }}"
       become: yes
       become_user: "{{oracle_db_owner}}"
+      run_once: yes
   when:
     - "oracle_db_sid_owner.rc is defined"
     - "oracle_db_sid_owner.rc == 0"
