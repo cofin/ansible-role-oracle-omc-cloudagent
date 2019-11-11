@@ -22,7 +22,7 @@
 
 - name: set default file acl permissions for cloudagent user
   shell: "setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
-  with_items: "{{ omc_cloudagent_default_permissions.defaults }}"
+  with_items: "{{ omc_cloudagent_default_permissions }}"
   register: agent_default_permissions
   become: yes
   become_user: root
@@ -39,7 +39,7 @@
 - name: set ACL permissions for cloudagent user on existing files
   shell: |
     find  {{item.path}} -xdev -exec setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
-  with_items: "{{ omc_cloudagent_default_permissions.files }}"
+  with_items: "{{ omc_cloudagent_default_permissions }}"
   register: agent_file_permissions
   become: yes
   become_user: root
@@ -55,7 +55,7 @@
 
 - name: set user defined default file acl permissions for cloudagent user
   shell: "setfacl -d -m u:{{omc_cloudagent_user}}:{{item.permissions}} {{ item.path }}"
-  with_items: "{{ omc_cloudagent_permissions.defaults }}"
+  with_items: "{{ omc_cloudagent_permissions }}"
   become: yes
   become_user: root
   register: user_default_permissions
@@ -70,18 +70,16 @@
     - "'Operation not supported' not  in user_default_permissions.stderr"
   when:
     - omc_cloudagent_permissions is defined
-    - omc_cloudagent_permissions.defaults is defined
 
 - name: set user defined ACL permissions for cloudagent user on existing files
   shell: |
     find  {{item.path}} -xdev -exec setfacl -m u:{{omc_cloudagent_user}}:{{item.permissions}} "{}" \;
-  with_items: "{{ omc_cloudagent_permissions.files }}"
+  with_items: "{{ omc_cloudagent_permissions }}"
   become: yes
   become_user: root
   register: user_file_permissions
   when:
     - omc_cloudagent_permissions is defined
-    - omc_cloudagent_permissions.files is defined
   changed_when:
     - "'No such file or directory' not  in user_file_permissions.stderr"
     - "'Operation not supported' not  in user_file_permissions.stderr"

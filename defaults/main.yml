@@ -49,20 +49,16 @@ omc_cloudagent_users:
       - { limit_type: "hard", limit_item: "memlock", value: unlimited }
 
 omc_cloudagent_default_permissions:
-  files:
-    - { path: "/var/log/yum.log*", permissions: "r" }
-    - { path: "/var/log/yum.log*", permissions: "r" }
-    - { path: "/var/log", permissions: "rx" }
-    - { path: "/var/log/cron*", permissions: "r" }
-    - { path: "/var/log/audit/audit*", permissions: "r" }
-    - { path: "/var/log/maillog*", permissions: "r" }
-    - { path: "/var/log/secure*", permissions: "r" }
-    - { path: "/var/log/sa", permissions: "rx" }
-    - { path: "/var/log/sa/*", permissions: "rx" }
-  defaults:
-    - { path: "/var/log/audit", permissions: "rx" }
-    - { path: "/var/log", permissions: "rx" }
-    - { path: "/var/log/sa", permissions: "rx" }
+  - { path: "/var/log/yum.log*", permissions: "r" }
+  - { path: "/var/log/yum.log*", permissions: "r" }
+  - { path: "/var/log", permissions: "rx" }
+  - { path: "/var/log/cron*", permissions: "r" }
+  - { path: "/var/log/audit/audit*", permissions: "r" }
+  - { path: "/var/log/maillog*", permissions: "r" }
+  - { path: "/var/log/secure*", permissions: "r" }
+  - { path: "/var/log/sa", permissions: "rx" }
+  - { path: "/var/log/sa/*", permissions: "rx" }
+  - { path: "/var/log/audit", permissions: "rx" }
 
 omc_cloudagent_agent_port: "4459"
 omc_cloudagent_tenant_name: "changeme"
