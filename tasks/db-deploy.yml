@@ -8,7 +8,7 @@
     mode: 0744
   tags: install
 - name: deploy OMC user for defined databases
-  include_tasks: set_db_facts.yml
+  include_tasks: set-db-facts.yml
   loop: "{{ omc_cloudagent_databases_monitored }}"
   loop_control:
     loop_var: oracle_db

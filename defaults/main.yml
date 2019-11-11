@@ -60,6 +60,23 @@ omc_cloudagent_default_permissions:
   - { path: "/var/log/sa/*", permissions: "rx" }
   - { path: "/var/log/audit", permissions: "rx" }
 
+omc_cloudagent_credentials:
+  - id: "ASMCredsNormal"
+    name: "ASMCredsMonitoring"
+    credType: "ASMCreds"
+    properties:
+      - { name: "user_name", "value": "CLEAR[{{omc_cloudagent_asm_user}}]"}
+      - { name: "password", "value": "CLEAR[{{omc_cloudagent_asm_password}}]"}
+      - { name: "role", "value": "CLEAR[SYSASM]"}
+  - id: "SQLCreds"
+    name: "SQLCredsMonitoring"
+    credType: "DBCreds"
+    properties:
+      - { name: "user_name", "value": "CLEAR[{{omc_cloudagent_asm_user}}]"}
+      - { name: "password", "value": "CLEAR[{{omc_cloudagent_asm_password}}]"}
+      - { name: "role", "value": "CLEAR[Normal]"}
+
+
 omc_cloudagent_agent_port: "4459"
 omc_cloudagent_tenant_name: "changeme"
 omc_cloudagent_registration_key: "changeme"
@@ -71,3 +88,5 @@ omc_cloudagent_reinstall_agent: yes
 omc_cloudagent_cpu_throttle_percentage: 5
 omc_cloudagent_db_user: "OMC_MON"
 omc_cloudagent_db_password: "P4ssw0rd"
+omc_cloudagent_asm_user: "OMC_MON"
+omc_cloudagent_asm_password: "P4ssw0rd"

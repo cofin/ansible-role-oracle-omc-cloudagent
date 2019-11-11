@@ -1,0 +1,5 @@
+---
+- name: output yaml to json as a test
+  debug:
+    msg: |
+      {{ omc_cloudagent_credentials | to_nice_json }}
