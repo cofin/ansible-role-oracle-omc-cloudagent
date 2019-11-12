@@ -1,0 +1,68 @@
+{
+    "entities": [
+    {
+      "name": "Midland_Exadata/ASM",
+      "type": "omc_oracle_asm",
+      "displayName": "Midland_Exadata/ASM",
+      "timezoneRegion": "America/Chicaco",
+      "credentialRefs": ["ASMCredsNormal"],
+      "properties": {
+        "host_name": {
+          "displayName": "host_name",
+          "value": "{{ansible_hostname}}"
+        },
+        "machine_name": {
+          "displayName": "machine_name",
+          "value": "{{ansible_hostname}}"
+        },
+
+        "oracle_home": {
+          "displayName": "oracle_home",
+          "value": "{{oracle_asm_grid_home}}"
+        },
+        "port": {
+          "displayName": "port",
+          "value": "1521"
+        },
+        "protocol": {
+          "displayName": "protocol",
+          "value": "TCP"
+        },
+        "sid": {
+          "displayName": "sid",
+          "value": "{{oracle_asm_sid}}"
+        },
+        "capability": {
+          "displayName": "capability",
+          "value": "monitoring"
+        }
+      }
+    },
+    {
+      "name": "Midland_Exadata/Listener",
+      "type": "omc_oracle_db_listener_cluster",
+      "displayName": "Midland_Exadata/Listener",
+      "properties": {
+        "omc_use_ssh": {
+          "displayName": "USE ssh",
+          "value": "false"
+        },
+        "host_name": {
+          "displayName": "Host Name",
+          "value": "{{ansible_hostname}}"
+        },
+        "lsnr_alias": {
+          "displayName": "Listener Cluster Alias",
+          "value": "LISTENER"
+        },
+        "crs_home": {
+          "displayName": "CRS Home",
+          "value": "{{oracle_asm_grid_home}}"
+        },
+        "capability": {
+          "displayName": "capability",
+          "value": "monitoring"
+        }
+      }
+    }]
+}
