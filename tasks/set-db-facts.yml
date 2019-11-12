@@ -1,20 +1,17 @@
 
-- name: Wait one second before proceeding.  Errors can happen when moving too quickly.
-  pause:
-    seconds: 2
+# - name: Wait one second before proceeding.  Errors can happen when moving too quickly.
+#   pause:
+#     seconds: 2
 - name: identify database owner
-  run_once: yes
   environment:
     ORACLE_DB: "{{ oracle_db.service_name }}"
   shell: |
     ps aux | grep pmon | grep -v grep | grep "$ORACLE_DB" | awk '{print $1}'
   register: oracle_db_sid_owner
 - name: "working with {{oracle_db.service_name}}"
-  run_once: yes
   debug:
     msg: ""
 - name: database process not found.  skipping deployment
-  run_once: yes
   debug:
     msg: |
       "Running database process was not found for {{oracle_db.service_name}}.  Skipping deployment"
@@ -26,14 +23,12 @@
     - name: set facts required for DB user deployment
       set_fact:
         oracle_db_owner: "{{oracle_db_sid_owner.stdout}}"
-      run_once: yes
     - name: creating user and/or refreshing privs for defined databases
       environment:
         ORACLE_DB: "{{oracle_db.service_name}}"
         ORAENV_ASK: "NO"
       shell: |
         export PATH=/usr/local/bin:$PATH
-        #export ORACLE_SID=$(ps -e -o command | grep pmon | grep -v grep | cut -d '_' -f3 | grep $ORACLE_DB | head -1)
         export ORACLE_SID=$(cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep "$ORACLE_DB" | head -1 | cut -f1 -d: -s)
         export ORACLE_HOME=$(cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep "$ORACLE_DB" | head -1 | cut -f2 -d: -s)
         . /usr/local/bin/oraenv
