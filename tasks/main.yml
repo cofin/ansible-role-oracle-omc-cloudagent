@@ -16,7 +16,7 @@
   include_tasks: db-deploy.yml
   when:
     - "omc_cloudagent_databases_monitored is defined"
-- name: add entitity credentials
-  include_tasks: add-entity-creds.yml
+- name: add entity credentials
+  include_tasks: entity-deploy.yml
   when:
-    - "omc_cloudagent_credentials is defined"
+    - "omc_cloudagent_databases_monitored is defined"
