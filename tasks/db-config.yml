@@ -39,6 +39,7 @@
       become: yes
       become_user: "{{oracle_db_owner}}"
       run_once: yes
+      ignore_errors: yes
     - name: "Successfully deployed the DB monitoring user to {{oracle_db.service_name}}"
       run_once: yes
       debug:
