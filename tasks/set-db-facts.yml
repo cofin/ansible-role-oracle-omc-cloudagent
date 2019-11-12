@@ -1,4 +1,7 @@
 
+- name: Wait one second before proceeding.  Errors can happen when moving too quickly.
+  pause:
+    seconds: 2
 - name: identify database owner
   run_once: yes
   environment:
@@ -31,8 +34,8 @@
       shell: |
         export PATH=/usr/local/bin:$PATH
         #export ORACLE_SID=$(ps -e -o command | grep pmon | grep -v grep | cut -d '_' -f3 | grep $ORACLE_DB | head -1)
-        export ORACLE_SID=$(cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep $ORACLE_DB | head -1 | cut -f1 -d: -s)
-        export ORACLE_HOME=$(cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep $ORACLE_DB | head -1 | cut -f2 -d: -s)
+        export ORACLE_SID=$(cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep "$ORACLE_DB" | head -1 | cut -f1 -d: -s)
+        export ORACLE_HOME=$(cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep "$ORACLE_DB" | head -1 | cut -f2 -d: -s)
         . /usr/local/bin/oraenv
         $ORACLE_HOME/bin/sqlplus -S / as sysdba @grantPrivileges.sql "{{ omc_cloudagent_db_user }}" "{{ omc_cloudagent_db_password }}" "Y"
       args:
