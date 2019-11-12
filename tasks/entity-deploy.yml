@@ -6,19 +6,19 @@
 
 
 
-- name: Identify ASM SID for application server
+- name: Identify owner of ASM instance
   environment:
     ORACLE_DB: "ASM"
   shell: |
     ps aux | grep pmon | grep -v grep | grep "$ORACLE_DB" | awk '{print $1}'
-  register: ps_asm_sid
-- name: Identify ASM SID for application server
+  register: ps_asm_owner
+- name: Identify SID for ASM instance
   environment:
     ORACLE_DB: "ASM"
   shell: |
     cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep "$ORACLE_DB" | head -1 | cut -f1 -d: -s
-  register: ps_asm_owner
-- name: Identify ASM SID for application server
+  register: ps_asm_sid
+- name: Identify grid home for ASM instance
   environment:
     ORACLE_DB: "ASM"
   shell: |
