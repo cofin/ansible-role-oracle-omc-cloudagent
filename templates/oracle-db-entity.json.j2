@@ -2,7 +2,7 @@
 {% for db in omc_cloudagent_databases_monitored %}
     {
       "name": "{{db.name}}",
-      "type": "omc_oracle_db",
+      "type": "omc_oracle_db_system",
       "displayName": "{{db.name}}",
       "timezoneRegion": "America/Chicago",
       "credentialRefs": ["SQLCredsNormal", "ASMCredsNormal"],
