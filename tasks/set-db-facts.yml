@@ -9,8 +9,7 @@
 - name: "working with {{oracle_db.db_name}}"
   run_once: yes
   debug:
-    msg: |
-      {{oracle_db_sid_owner}}
+    msg: ""
 - name: database process not found.  skipping deployment
   run_once: yes
   debug:
@@ -45,8 +44,7 @@
     - name: "Successfully deployed the DB monitoring user to {{oracle_db.db_name}}"
       run_once: yes
       debug:
-        msg: |
-          {{oracle_db_sid_owner}}
+        msg: ""
       when:
         - "user_deployment.rc is defined"
         - "user_deployment.rc == 0"
