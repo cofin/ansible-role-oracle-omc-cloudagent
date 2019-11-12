@@ -5,11 +5,11 @@
 - name: identify database owner
   run_once: yes
   environment:
-    ORACLE_DB: "{{ oracle_db.db_name }}"
+    ORACLE_DB: "{{ oracle_db.service_name }}"
   shell: |
     ps aux | grep pmon | grep -v grep | grep "$ORACLE_DB" | awk '{print $1}'
   register: oracle_db_sid_owner
-- name: "working with {{oracle_db.db_name}}"
+- name: "working with {{oracle_db.service_name}}"
   run_once: yes
   debug:
     msg: ""
@@ -17,7 +17,7 @@
   run_once: yes
   debug:
     msg: |
-      "Running database process was not found for {{oracle_db.db_name}}.  Skipping deployment"
+      "Running database process was not found for {{oracle_db.service_name}}.  Skipping deployment"
   when:
     - "(oracle_db_sid_owner.rc is defined and oracle_db_sid_owner.rc > 0) or (oracle_db_sid_owner.stdout is defined and oracle_db_sid_owner.stdout == '')"
 
@@ -29,7 +29,7 @@
       run_once: yes
     - name: creating user and/or refreshing privs for defined databases
       environment:
-        ORACLE_DB: "{{oracle_db.db_name}}"
+        ORACLE_DB: "{{oracle_db.service_name}}"
         ORAENV_ASK: "NO"
       shell: |
         export PATH=/usr/local/bin:$PATH
@@ -44,7 +44,7 @@
       become: yes
       become_user: "{{oracle_db_owner}}"
       run_once: yes
-    - name: "Successfully deployed the DB monitoring user to {{oracle_db.db_name}}"
+    - name: "Successfully deployed the DB monitoring user to {{oracle_db.service_name}}"
       run_once: yes
       debug:
         msg: "{{user_deployment.stdout}}"
