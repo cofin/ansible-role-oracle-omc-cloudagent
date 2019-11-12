@@ -411,61 +411,25 @@ begin
 
 	/* ITA related privileges */
 	if(invoked_by_ita) then
-		dbms_output.Put_line ('granting select ON sys.dba_hist_snapshot to  ' || dbrole);
+		dbms_output.Put_line ('granting ITA privs to ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_snapshot to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_database_instance to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_database_instance to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_ic_client_stats to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_ic_client_stats to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_sgastat to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_sgastat to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_pgastat to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_pgastat to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_osstat to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_osstat to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_sys_time_model to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_sys_time_model to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_sysstat to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_sysstat to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_sga to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_sga to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_sqlstat to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_sqlstat to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_sqltext to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_sqltext to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_system_event to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_system_event to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON sys.dba_hist_sysmetric_history to  ' || dbrole);
 		execute immediate 'grant select ON sys.dba_hist_sysmetric_history to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON V_$SQL to  ' || dbrole);
 		execute immediate 'grant select ON V_$SQL to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON GV_$SQLCOMMAND to  ' || dbrole);
 		execute immediate 'grant select ON GV_$SQLCOMMAND to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON V_$SQL_PLAN to  ' || dbrole);
 		execute immediate 'grant select ON V_$SQL_PLAN to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON GV_$SQL_PLAN to  ' || dbrole);
 		execute immediate 'grant select ON GV_$SQL_PLAN to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON V_$RSRC_CONSUMER_GROUP to  ' || dbrole);
 		execute immediate 'grant select ON V_$RSRC_CONSUMER_GROUP to ' || dbrole;
-
-		dbms_output.Put_line ('granting select ON GV_$RSRC_CONSUMER_GROUP to  ' || dbrole);
 		execute immediate 'grant select ON GV_$RSRC_CONSUMER_GROUP to ' || dbrole;
 	end if;
 	/* End of ITA related privileges */
@@ -517,19 +481,19 @@ begin
 		execute immediate 'grant select on cdb_undo_extents to ' || dbrole;
 
 		dbms_output.Put_line ('granting select on CDB_SCHEDULER_JOB_RUN_DETAILS to ' || dbrole );
-                execute immediate 'grant select on CDB_SCHEDULER_JOB_RUN_DETAILS to ' || dbrole;
+		execute immediate 'grant select on CDB_SCHEDULER_JOB_RUN_DETAILS to ' || dbrole;
 
-               dbms_output.Put_line ('granting select on cdb_jobs to ' || dbrole );
-               execute immediate 'grant select on cdb_jobs to ' || dbrole;
+		dbms_output.Put_line ('granting select on cdb_jobs to ' || dbrole );
+		execute immediate 'grant select on cdb_jobs to ' || dbrole;
 
-               dbms_output.Put_line ('granting select on CDB_SCHEDULER_JOBS to ' || dbrole );
-               execute immediate 'grant select on CDB_SCHEDULER_JOBS to ' || dbrole;
+		dbms_output.Put_line ('granting select on CDB_SCHEDULER_JOBS to ' || dbrole );
+		execute immediate 'grant select on CDB_SCHEDULER_JOBS to ' || dbrole;
 
-               dbms_output.Put_line ('granting select on cdb_invalid_objects to ' || dbrole );
-               execute immediate 'grant select on cdb_invalid_objects to ' || dbrole;
+		dbms_output.Put_line ('granting select on cdb_invalid_objects to ' || dbrole );
+		execute immediate 'grant select on cdb_invalid_objects to ' || dbrole;
 
-	       dbms_output.Put_line ('granting execute  on SYS.DBMS_DRS to ' || dbrole );
-	       execute immediate 'grant execute on SYS.DBMS_DRS to ' || dbrole;
+		dbms_output.Put_line ('granting execute  on SYS.DBMS_DRS to ' || dbrole );
+		execute immediate 'grant execute on SYS.DBMS_DRS to ' || dbrole;
 
 		dbms_output.Put_line ('granting select on v_$dg_broker_config to ' || dbrole );
 		execute immediate 'grant select on v_$dg_broker_config to ' || dbrole;
@@ -643,18 +607,18 @@ begin
 
 		dbms_output.put_line('granting execute on ebs packages to ' || monuser);
 
-		execute immediate 'grant excecute on apps.fnd_oam_em to ' || monuser;
+		execute immediate 'grant execute on apps.fnd_oam_em to ' || monuser;
 
-		execute immediate 'grant excecute on apps.fnd_profile to ' || monuser;
+		execute immediate 'grant execute on apps.fnd_profile to ' || monuser;
 				--dbms_output.put_line('granting permissions for config and compliance pack to ' || monuser);
 
-		execute immediate 'grant excecute on apps.fnd_web_config to  ' || monuser;
+		execute immediate 'grant execute on apps.fnd_web_config to  ' || monuser;
 
-		execute immediate 'grant excecute on apps.fnd_web_sec to  ' || monuser;
+		execute immediate 'grant execute on apps.fnd_web_sec to  ' || monuser;
 
-		execute immediate 'grant excecute on apps.iby_creditcard_pkg to  ' || monuser;
+		execute immediate 'grant execute on apps.iby_creditcard_pkg to  ' || monuser;
 
-		execute immediate 'grant excecute on apps.iby_security_pkg to  ' || monuser;
+		execute immediate 'grant execute on apps.iby_security_pkg to  ' || monuser;
 
 		execute immediate 'grant select on apps.iby_sys_security_options to  ' || monuser;
 
