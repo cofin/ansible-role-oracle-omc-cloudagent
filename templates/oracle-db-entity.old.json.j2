@@ -1,0 +1,29 @@
+{"entities": [
+{% for db in omc_cloudagent_databases_monitored %}
+    {
+      "name": "{{db.name}}",
+      "type": "omc_oracle_db",
+      "displayName": "{{db.name}}",
+      "timezoneRegion": "America/Chicago",
+      "credentialRefs": ["SQLCredsNormal"],
+      "properties": {
+        "host_name": {
+          "displayName": "host_name",
+          "value": "{{db.db_host}}"
+        },
+        "port": {
+          "displayName": "port",
+          "value": "{{db.db_port}}"
+        },
+        "service_name": {
+          "displayName": "service_name",
+          "value": "{{db.service_name}}"
+        },
+        "capability": {
+          "displayName": "capability",
+          "value": "monitoring"
+        }
+      }
+    }{% if not loop.last %}, {%endif%}
+{% endfor %}
+]}

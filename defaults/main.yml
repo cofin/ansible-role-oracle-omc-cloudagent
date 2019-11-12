@@ -50,6 +50,7 @@ omc_cloudagent_db_user: "OMC_MON"
 omc_cloudagent_db_password: "P4ssw0rd"
 omc_cloudagent_asm_user: "OMC_MON"
 omc_cloudagent_asm_password: "P4ssw0rd"
+omc_cloudagent_asm_name: "ASM"
 omc_cloudagent_credentials:
   - id: "ASMCredsNormal"
     name: "ASMCredsMonitoring"

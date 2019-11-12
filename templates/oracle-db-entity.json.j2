@@ -5,23 +5,40 @@
       "type": "omc_oracle_db",
       "displayName": "{{db.name}}",
       "timezoneRegion": "America/Chicago",
-      "credentialRefs": ["SQLCredsNormal"],
+      "credentialRefs": ["SQLCredsNormal", "ASMCredsNormal"],
       "properties": {
-        "host_name": {
-          "displayName": "host_name",
-          "value": "{{db.db_host}}"
+        "omc_dbsys_config": {
+            "displayName": "Configuration for DB System",
+            "value": "RAC"
         },
-        "port": {
-          "displayName": "port",
-          "value": "{{db.db_port}}"
+        "omc_dbsys_name_qualifier": {
+            "displayName" : "Name Prefix",
+            "value": ""
         },
-        "service_name": {
-          "displayName": "service_name",
-          "value": "{{db.service_name}}"
+        "omc_db_system_scan_name":
+        {
+            "displayName": "SCAN Name",
+            "value": "{{db.db_host}}"
+        },
+        "omc_dbsys_port": {
+            "displayName": "SCAN Port",
+            "value": "{{db.db_port}}"
+        },
+        "omc_dbsys_connect_type": {
+            "displayName": "Connect Type",
+            "value": "Service Name"
+        },
+        "omc_dbsys_connect_value": {
+            "displayName": "Service Name",
+            "value": "{{db.service_name}}"
+        },
+        "omc_dbsys_home": {
+            "displayName": "Grid home",
+            "value": "{{oracle_asm_grid_home}}"
         },
         "capability": {
-          "displayName": "capability",
-          "value": "monitoring"
+            "displayName": "capability",
+            "value": "monitoring"
         }
       }
     }{% if not loop.last %}, {%endif%}
