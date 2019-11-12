@@ -24,7 +24,10 @@
   shell: |
     cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep "$ORACLE_DB" | head -1 | cut -f2 -d: -s
   register: ps_asm_grid_home
-
+- name: Set FQDN of hostname
+  shell: |
+    hostname -f
+  register: hostname_fdqn_asm
 # - name: successfully fetched ASM data, proceeding with entity config
 #   block:
 #   when:
@@ -39,6 +42,7 @@
     oracle_asm_grid_home: "{{ps_asm_grid_home.stdout}}"
     oracle_asm_owner: "{{ps_asm_owner.stdout}}"
     oracle_asm_sid: "{{ps_asm_sid.stdout}}"
+    oracle_asm_hostname: "{{hostname_fdqn_asm.stdout}}"
 - name: copy ASM credentials JSON to server
   template:
     src: "{{ role_path }}/templates/asm-creds.json.j2"
