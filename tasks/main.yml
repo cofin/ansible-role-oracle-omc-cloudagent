@@ -13,7 +13,7 @@
 - name: "Execute Agent Post Install Steps on {{ansible_hostname}}"
   include_tasks: post-install.yml
 - name: "Deploying to any runing Oracle databases on {{ansible_hostname}}"
-  include_tasks: db-deploy.yml
+  include_tasks: db.yml
   when:
     - "omc_cloudagent_databases_monitored is defined"
     - "omc_cloudagent_databases_monitored|length > 0"

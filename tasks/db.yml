@@ -1,0 +1,18 @@
+---
+- name: copy OMC monitoring agent deployment script to server
+  copy:
+    src: "{{role_path}}/files/grantPrivileges.sql"
+    dest: "{{ omc_cloudagent_stage_dir }}"
+    owner: "{{omc_cloudagent_user}}"
+    group: "{{omc_cloudagent_group}}"
+    mode: 0744
+  tags: install
+- name: deploy OMC user for defined databases
+  include_tasks: db-deploy.yml
+  loop: "{{ omc_cloudagent_databases_monitored }}"
+  loop_control:
+    loop_var: oracle_db
+# - name: removing script
+#   file:
+#     path: "{{ omc_cloudagent_stage_dir }}"
+#     state: absent
