@@ -2,16 +2,16 @@
 # - name: Wait one second before proceeding.  Errors can happen when moving too quickly.
 #   pause:
 #     seconds: 2
-- name: identify database owner
+- name: "identifying owner for {{ oracle_db.service_name }}"
   environment:
     ORACLE_DB: "{{ oracle_db.service_name }}"
   shell: |
     ps aux | grep pmon | grep -v grep | grep "$ORACLE_DB" | awk '{print $1}'
   register: oracle_db_sid_owner
-- name: "working with {{oracle_db.service_name}}"
-  debug:
-    msg: ""
-- name: database process not found.  skipping deployment
+# - name: "working with {{oracle_db.service_name}}"
+#   debug:
+#     msg: ""
+- name: "-> no running database named {{ oracle_db.service_name }} was found"
   debug:
     msg: |
       "Running database process was not found for {{oracle_db.service_name}}.  Skipping deployment"
@@ -20,10 +20,10 @@
 
 - name: deploy user
   block:
-    - name: set facts required for DB user deployment
+    - name: "set database facts for {{ oracle_db.service_name }}"
       set_fact:
         oracle_db_owner: "{{oracle_db_sid_owner.stdout}}"
-    - name: creating user and/or refreshing privs for defined databases
+    - name: "deploy OMC monitoring user on {{ oracle_db.service_name }}"
       environment:
         ORACLE_DB: "{{oracle_db.service_name}}"
         ORAENV_ASK: "NO"
@@ -40,14 +40,14 @@
       become_user: "{{oracle_db_owner}}"
       run_once: yes
       ignore_errors: yes
-    - name: "Successfully deployed the DB monitoring user to {{oracle_db.service_name}}"
-      run_once: yes
-      debug:
-        msg: "{{user_deployment.stdout}}"
-      when:
-        - "user_deployment.rc is defined"
-        - "user_deployment.rc == 0"
-        - "'Resetting ORACLE_BASE to its previous value or ORACLE_HOME' not in user_deployment.stdout"
+    # - name: "Successfully deployed the DB monitoring user to {{oracle_db.service_name}}"
+    #   run_once: yes
+    #   debug:
+    #     msg: "{{user_deployment.stdout}}"
+    #   when:
+    #     - "user_deployment.rc is defined"
+    #     - "user_deployment.rc == 0"
+    #     - "'Resetting ORACLE_BASE to its previous value or ORACLE_HOME' not in user_deployment.stdout"
   when:
     - "oracle_db_sid_owner.rc is defined"
     - "oracle_db_sid_owner.rc == 0"
