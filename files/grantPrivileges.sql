@@ -70,7 +70,7 @@ begin
 		invoked_by_ita := FALSE;
 	end if;
 	select version into db_version from v$instance;
-	dbms_output.Put_line ('Version: ' || db_version);
+	--dbms_output.Put_line ('Version: ' || db_version);
 	/*
 	db_version = 12.1.0.2.0
 	db_major_version=12
@@ -95,7 +95,7 @@ begin
 	db_version=10.2.0.1.0
 	*/
 	if (db_major_version < 11) then
-		dbms_output.Put_line ('ERROR: IM/ITA  is not supported for the DB Version: ' || db_major_version);
+		--dbms_output.Put_line ('ERROR: IM/ITA  is not supported for the DB Version: ' || db_major_version);
 		RAISE_APPLICATION_ERROR(-00406, 'IM/ITA  is not supported for the DB Version: ' || db_major_version);
 	end if;
 
@@ -105,7 +105,7 @@ begin
 	db_version=11.1.0.1.0
 	*/
 	if ((db_major_version < 12) and (db_minor_version < 2)) then
-		dbms_output.Put_line ('ERROR: IM/ITA is not supported for the DB Version:' || db_version);
+		--dbms_output.Put_line ('ERROR: IM/ITA is not supported for the DB Version:' || db_version);
 		RAISE_APPLICATION_ERROR(-00406, 'IM/ITA  is not supported for the DB Version: ' || db_major_version);
 	end if;
 
@@ -118,10 +118,10 @@ begin
 	db_version=11.2.0.1.0
 	*/
 	if ( invoked_by_ita and (db_major_version < 12) and (db_minor_version >= 2) and (db_sub_version < 4)) then
-	   dbms_output.Put_line ('ERROR: ITA is not supported for the DB Version:' || db_version);
+	   --dbms_output.Put_line ('ERROR: ITA is not supported for the DB Version:' || db_version);
 	   RAISE_APPLICATION_ERROR(-00406, 'ITA  is not supported for the DB Version: ' || db_major_version);
 	elsif ((db_major_version < 12) and (db_minor_version >= 2) and (db_sub_version < 2)) then
-	   dbms_output.Put_line ('ERROR: IM is not supported for the DB Version:' || db_version);
+	   --dbms_output.Put_line ('ERROR: IM is not supported for the DB Version:' || db_version);
 	   RAISE_APPLICATION_ERROR(-00406, 'IM  is not supported for the DB Version: ' || db_major_version);
 	end if;
 
@@ -147,7 +147,7 @@ begin
 		is_db_cdb := 'NO';
 		execute immediate 'SELECT nvl(max(upper(value)),''NONE'') FROM v$parameter WHERE name=''control_management_pack_access''' into management_pack_value;
 	end if;
-	dbms_output.Put_line ('Enabled Pack: ' || management_pack_value);
+	--dbms_output.Put_line ('Enabled Pack: ' || management_pack_value);
 
 	if (invoked_by_ita and (number_of_editions = 0 or management_pack_value = 'NONE')) then
 		dbms_output.Put_line('WARNING: ITA will only collect available performance metrics for Standard Edition databases.');
@@ -162,7 +162,7 @@ begin
 		dbrole := 'c##omc_mon_role';
 		if(length('&1')>2 and upper(substr('&1',1,3)) <> 'C##') then
 			monuser := 'c##&1';
-			dbms_output.Put_line ('WARNING: Provided database details were CDB database, so user will be created with c## prefix.');
+			--dbms_output.Put_line ('WARNING: Provided database details were CDB database, so user will be created with c## prefix.');
 		else
 			monuser := '&1';
 		end if;
@@ -173,240 +173,247 @@ begin
 
 	select count(*) into role_exist from dba_roles where role=upper(dbrole);
 	if (role_exist = 0) then
+		dbms_output.Put_line ('create role ' || dbrole);
+
 		execute immediate 'create role ' || dbrole;
 	end if;
 
 	select count(*) into user_exist from dba_users where username=upper(monuser);
 	if (user_exist = 0) then
+		dbms_output.Put_line ('creating user ' || monuser);
+
 		execute immediate 'create user ' || monuser || ' identified by "&2"';
 	elsif (user_exist > 0) then
-		execute immediate 'alter user ' || monuser || ' profile default account unlock identified by "&2"';
+		dbms_output.Put_line ('altering account ' || monuser);
+
+		execute immediate 'alter user ' || monuser || ' profile serviceaccount account unlock identified by "&2"';
 	end if;
 
        /* Starting Basic  IM privileges */
+	dbms_output.Put_line ('granting basic privs to ' || dbrole);
 
-	dbms_output.Put_line ('granting create session to ' || monuser);
+	----dbms_output.Put_line ('granting create session to ' || monuser);
 	execute immediate 'grant create session to ' || monuser;
 
-	dbms_output.Put_line ('granting select on v_$parameter to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$parameter to ' || dbrole );
 	execute immediate 'grant select on v_$parameter to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$parameter to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$parameter to ' || dbrole );
 	execute immediate 'grant select on gv_$parameter to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$instance to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$instance to ' || dbrole );
 	execute immediate 'grant select on v_$instance to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$instance to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$instance to ' || dbrole );
 	execute immediate 'grant select on gv_$instance to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$services to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$services to ' || dbrole );
 	execute immediate 'grant select on gv_$services to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$services to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$services to ' || dbrole );
 	execute immediate 'grant select on v_$services to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$sql_monitor to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$sql_monitor to ' || dbrole );
 	execute immediate 'grant select on gv_$sql_monitor to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$database to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$database to ' || dbrole );
 	execute immediate 'grant select on v_$database to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$database to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$database to ' || dbrole );
 	execute immediate 'grant select on gv_$database to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$osstat to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$osstat to ' || dbrole );
 	execute immediate 'grant select on v_$osstat to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$osstat to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$osstat to ' || dbrole );
 	execute immediate 'grant select on gv_$osstat to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$statname  to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$statname  to ' || dbrole );
 	execute immediate 'grant select on v_$statname  to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$statname to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$statname to ' || dbrole );
 	execute immediate 'grant select on gv_$statname  to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$sga to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$sga to ' || dbrole );
 	execute immediate 'grant select on gv_$sga to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$pgastat to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$pgastat to ' || dbrole );
 	execute immediate 'grant select on gv_$pgastat to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$sysmetric_summary to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$sysmetric_summary to ' || dbrole );
 	execute immediate 'grant select on gv_$sysmetric_summary to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on sys.dba_tablespaces to ' || dbrole );
+	--dbms_output.Put_line ('granting select on sys.dba_tablespaces to ' || dbrole );
 	execute immediate 'grant select on sys.dba_tablespaces to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on dba_data_files to ' || dbrole );
+	--dbms_output.Put_line ('granting select on dba_data_files to ' || dbrole );
 	execute immediate 'grant select on dba_data_files to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on dba_free_space to ' || dbrole );
+	--dbms_output.Put_line ('granting select on dba_free_space to ' || dbrole );
 	execute immediate 'grant select on dba_free_space to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on dba_undo_extents to ' || dbrole );
+	--dbms_output.Put_line ('granting select on dba_undo_extents to ' || dbrole );
 	execute immediate 'grant select on dba_undo_extents to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on dba_tablespace_usage_metrics to ' || dbrole );
+	--dbms_output.Put_line ('granting select on dba_tablespace_usage_metrics to ' || dbrole );
 	execute immediate 'grant select on dba_tablespace_usage_metrics to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$active_session_history to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$active_session_history to ' || dbrole );
 	execute immediate 'grant select on v_$active_session_history to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$active_session_history to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$active_session_history to ' || dbrole );
 	execute immediate 'grant select on gv_$active_session_history to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$ash_info to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$ash_info to ' || dbrole );
 	execute immediate 'grant select on v_$ash_info to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$ash_info to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$ash_info to ' || dbrole );
 	execute immediate 'grant select on gv_$ash_info to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on dba_temp_files to ' || dbrole );
+	--dbms_output.Put_line ('granting select on dba_temp_files to ' || dbrole );
 	execute immediate 'grant select on dba_temp_files to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$sort_segment to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$sort_segment to ' || dbrole );
 	execute immediate 'grant select on gv_$sort_segment to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on sys.ts$ to ' || dbrole );
+	--dbms_output.Put_line ('granting select on sys.ts$ to ' || dbrole );
 	execute immediate 'grant select on sys.ts$ to ' || dbrole;
 
-	dbms_output.Put_line ('granting execute on sys.dbms_lock to ' || dbrole );
+	--dbms_output.Put_line ('granting execute on sys.dbms_lock to ' || dbrole );
 	execute immediate 'grant execute on sys.dbms_lock to ' || dbrole;
 
-	dbms_output.Put_line ('granting execute on dbms_system to ' || dbrole );
+	--dbms_output.Put_line ('granting execute on dbms_system to ' || dbrole );
 	execute immediate 'grant execute on dbms_system to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$session to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$session to ' || dbrole );
 	execute immediate 'grant select on v_$session to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$session  to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$session  to ' || dbrole );
 	execute immediate 'grant select on gv_$session  to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$sqlarea     to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$sqlarea     to ' || dbrole );
 	execute immediate 'grant select on gv_$sqlarea     to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$sqlstats     to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$sqlstats     to ' || dbrole );
 	execute immediate 'grant select on gv_$sqlstats     to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$sqlcommand to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$sqlcommand to ' || dbrole );
 	execute immediate 'grant select on v_$sqlcommand to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$IOSTAT_FILE to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$IOSTAT_FILE to ' || dbrole );
 	execute immediate 'grant select on gv_$IOSTAT_FILE to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$sysstat to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$sysstat to ' || dbrole );
 	execute immediate 'grant select on v_$sysstat to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$sysstat to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$sysstat to ' || dbrole );
 	execute immediate 'grant select on gv_$sysstat to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$sys_time_model to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$sys_time_model to ' || dbrole );
 	execute immediate 'grant select on gv_$sys_time_model to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$event_name to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$event_name to ' || dbrole );
 	execute immediate 'grant select on v_$event_name to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$waitclassmetric to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$waitclassmetric to ' || dbrole );
 	execute immediate 'grant select on gv_$waitclassmetric to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$sysmetric to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$sysmetric to ' || dbrole );
 	execute immediate 'grant select on v_$sysmetric to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$sysmetric to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$sysmetric to ' || dbrole );
 	execute immediate 'grant select on gv_$sysmetric to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$sysmetric_history to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$sysmetric_history to ' || dbrole );
 	execute immediate 'grant select on v_$sysmetric_history to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$sysmetric_history to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$sysmetric_history to ' || dbrole );
 	execute immediate 'grant select on gv_$sysmetric_history to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$system_event to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$system_event to ' || dbrole );
 	execute immediate 'grant select on v_$system_event to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$system_event to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$system_event to ' || dbrole );
 	execute immediate 'grant select on gv_$system_event to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$sql to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$sql to ' || dbrole );
 	execute immediate 'grant select on gv_$sql to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$alert_types to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$alert_types to ' || dbrole );
 	execute immediate 'grant select on v_$alert_types to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$threshold_types to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$threshold_types to ' || dbrole );
 	execute immediate 'grant select on v_$threshold_types to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on GV_$CONTROLFILE to ' || dbrole );
+	--dbms_output.Put_line ('granting select on GV_$CONTROLFILE to ' || dbrole );
 	execute immediate 'grant select on GV_$CONTROLFILE to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on gv_$log to ' || dbrole );
+	--dbms_output.Put_line ('granting select on gv_$log to ' || dbrole );
 	execute immediate 'grant select on gv_$log to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on GV_$CONTROLFILE_RECORD_SECTION to ' || dbrole );
+	--dbms_output.Put_line ('granting select on GV_$CONTROLFILE_RECORD_SECTION to ' || dbrole );
 	execute immediate 'grant select on GV_$CONTROLFILE_RECORD_SECTION to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$archive_dest_status to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$archive_dest_status to ' || dbrole );
 	execute immediate 'grant select on v_$archive_dest_status to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$rman_backup_job_details to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$rman_backup_job_details to ' || dbrole );
 	execute immediate 'grant select on v_$rman_backup_job_details to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$backup_piece_details to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$backup_piece_details to ' || dbrole );
 	execute immediate 'grant select on v_$backup_piece_details to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$backup_set_details to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$backup_set_details to ' || dbrole );
 	execute immediate 'grant select on v_$backup_set_details to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$recovery_file_dest to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$recovery_file_dest to ' || dbrole );
 	execute immediate 'grant select on v_$recovery_file_dest to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$flashback_database_log to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$flashback_database_log to ' || dbrole );
 	execute immediate 'grant select on v_$flashback_database_log to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$rman_configuration to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$rman_configuration to ' || dbrole );
 	execute immediate 'grant select on v_$rman_configuration to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$archive_dest to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$archive_dest to ' || dbrole );
 	execute immediate 'grant select on v_$archive_dest to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$dataguard_stats to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$dataguard_stats to ' || dbrole );
 	execute immediate 'grant select on v_$dataguard_stats to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on v_$logmnr_stats to ' || dbrole );
+	--dbms_output.Put_line ('granting select on v_$logmnr_stats to ' || dbrole );
 	execute immediate 'grant select on v_$logmnr_stats to ' || dbrole;
 
-	dbms_output.Put_line ('granting select on dba_logmnr_session to ' || dbrole );
+	--dbms_output.Put_line ('granting select on dba_logmnr_session to ' || dbrole );
 	execute immediate 'grant select on dba_logmnr_session to ' || dbrole;
 
-        dbms_output.Put_line ('granting select on gv_$asm_client to ' || dbrole );
-        execute immediate 'grant select on gv_$asm_client to ' || dbrole;
+	--dbms_output.Put_line ('granting select on gv_$asm_client to ' || dbrole );
+	execute immediate 'grant select on gv_$asm_client to ' || dbrole;
 
-        dbms_output.Put_line ('granting select on DBA_SCHEDULER_JOB_RUN_DETAILS to ' || dbrole );
-        execute immediate 'grant select on DBA_SCHEDULER_JOB_RUN_DETAILS to ' || dbrole;
+	--dbms_output.Put_line ('granting select on DBA_SCHEDULER_JOB_RUN_DETAILS to ' || dbrole );
+	execute immediate 'grant select on DBA_SCHEDULER_JOB_RUN_DETAILS to ' || dbrole;
 
-        dbms_output.Put_line ('granting select on dba_jobs to ' || dbrole );
-        execute immediate 'grant select on dba_jobs to ' || dbrole;
+	--dbms_output.Put_line ('granting select on dba_jobs to ' || dbrole );
+	execute immediate 'grant select on dba_jobs to ' || dbrole;
 
-        dbms_output.Put_line ('granting select on DBA_SCHEDULER_JOBS to ' || dbrole );
-        execute immediate 'grant select on DBA_SCHEDULER_JOBS to ' || dbrole;
+	--dbms_output.Put_line ('granting select on DBA_SCHEDULER_JOBS to ' || dbrole );
+	execute immediate 'grant select on DBA_SCHEDULER_JOBS to ' || dbrole;
 
 
-        dbms_output.Put_line ('granting select on sys."_CURRENT_EDITION_OBJ" to ' || dbrole );
-        execute immediate 'grant select on sys."_CURRENT_EDITION_OBJ" to ' || dbrole;
+	--dbms_output.Put_line ('granting select on sys."_CURRENT_EDITION_OBJ" to ' || dbrole );
+	execute immediate 'grant select on sys."_CURRENT_EDITION_OBJ" to ' || dbrole;
 
-        dbms_output.Put_line ('granting select on sys."_BASE_USER" to ' || dbrole );
-        execute immediate 'grant select on sys."_BASE_USER" to ' || dbrole;
+	--dbms_output.Put_line ('granting select on sys."_BASE_USER" to ' || dbrole );
+	execute immediate 'grant select on sys."_BASE_USER" to ' || dbrole;
 
-        dbms_output.Put_line ('granting select on dba_users to ' || dbrole );
-        execute immediate 'grant select on dba_users to ' || dbrole;
+	--dbms_output.Put_line ('granting select on dba_users to ' || dbrole );
+	execute immediate 'grant select on dba_users to ' || dbrole;
 
-        dbms_output.Put_line ('granting select on dba_registry to ' || dbrole );
-        execute immediate 'grant select on dba_registry to ' || dbrole;
+	--dbms_output.Put_line ('granting select on dba_registry to ' || dbrole );
+	execute immediate 'grant select on dba_registry to ' || dbrole;
 
-        dbms_output.Put_line ('granting select on v_$option to ' || dbrole );
-        execute immediate 'grant select on v_$option to ' || dbrole;
+	--dbms_output.Put_line ('granting select on v_$option to ' || dbrole );
+	execute immediate 'grant select on v_$option to ' || dbrole;
 
 
 	/* End of IM privileges */
@@ -439,68 +446,70 @@ begin
 
        /* Privileges that can be added only for DBs above version 12 */
 	if (isdb_version_above_12) then
-
-		dbms_output.Put_line ('granting  select on v_$disk_restore_range to ' || dbrole );
+		dbms_output.Put_line ('granting Oracle DB 12c+ privs to ' || dbrole);
+		--dbms_output.Put_line ('granting  select on v_$disk_restore_range to ' || dbrole );
 		execute immediate 'grant select on v_$disk_restore_range to ' || dbrole;
 
-		dbms_output.Put_line ('granting  select on v_$sbt_restore_range to ' || dbrole );
+		--dbms_output.Put_line ('granting  select on v_$sbt_restore_range to ' || dbrole );
 		execute immediate 'grant select on v_$sbt_restore_range to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on cdb_services to ' || dbrole );
+		--dbms_output.Put_line ('granting select on cdb_services to ' || dbrole );
 		execute immediate 'grant select on cdb_services to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on cdb_tablespace_usage_metrics to ' || dbrole );
+		--dbms_output.Put_line ('granting select on cdb_tablespace_usage_metrics to ' || dbrole );
 		execute immediate 'grant select on cdb_tablespace_usage_metrics to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on cdb_pdbs to ' || dbrole );
+		--dbms_output.Put_line ('granting select on cdb_pdbs to ' || dbrole );
 		execute immediate 'grant select on cdb_pdbs to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on v_$pdbs to ' || dbrole );
+		--dbms_output.Put_line ('granting select on v_$pdbs to ' || dbrole );
 		execute immediate 'grant select on v_$pdbs to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on gv_$pdbs to ' || dbrole );
+		--dbms_output.Put_line ('granting select on gv_$pdbs to ' || dbrole );
 		execute immediate 'grant select on gv_$pdbs to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on gv_$containers to ' || dbrole );
+		--dbms_output.Put_line ('granting select on gv_$containers to ' || dbrole );
 		execute immediate 'grant select on gv_$containers to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on v_$containers to ' || dbrole );
+		--dbms_output.Put_line ('granting select on v_$containers to ' || dbrole );
 		execute immediate 'grant select on v_$containers to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on cdb_tablespaces to ' || dbrole );
+		--dbms_output.Put_line ('granting select on cdb_tablespaces to ' || dbrole );
 		execute immediate 'grant select on cdb_tablespaces to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on cdb_data_files to ' || dbrole );
+		--dbms_output.Put_line ('granting select on cdb_data_files to ' || dbrole );
 		execute immediate 'grant select on cdb_data_files to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on cdb_temp_files to ' || dbrole );
+		--dbms_output.Put_line ('granting select on cdb_temp_files to ' || dbrole );
 		execute immediate 'grant select on cdb_temp_files to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on cdb_free_space to ' || dbrole );
+		--dbms_output.Put_line ('granting select on cdb_free_space to ' || dbrole );
 		execute immediate 'grant select on cdb_free_space to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on cdb_undo_extents to ' || dbrole );
+		--dbms_output.Put_line ('granting select on cdb_undo_extents to ' || dbrole );
 		execute immediate 'grant select on cdb_undo_extents to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on CDB_SCHEDULER_JOB_RUN_DETAILS to ' || dbrole );
+		--dbms_output.Put_line ('granting select on CDB_SCHEDULER_JOB_RUN_DETAILS to ' || dbrole );
 		execute immediate 'grant select on CDB_SCHEDULER_JOB_RUN_DETAILS to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on cdb_jobs to ' || dbrole );
+		--dbms_output.Put_line ('granting select on cdb_jobs to ' || dbrole );
 		execute immediate 'grant select on cdb_jobs to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on CDB_SCHEDULER_JOBS to ' || dbrole );
+		--dbms_output.Put_line ('granting select on CDB_SCHEDULER_JOBS to ' || dbrole );
 		execute immediate 'grant select on CDB_SCHEDULER_JOBS to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on cdb_invalid_objects to ' || dbrole );
+		--dbms_output.Put_line ('granting select on cdb_invalid_objects to ' || dbrole );
 		execute immediate 'grant select on cdb_invalid_objects to ' || dbrole;
 
-		dbms_output.Put_line ('granting execute  on SYS.DBMS_DRS to ' || dbrole );
+		--dbms_output.Put_line ('granting execute  on SYS.DBMS_DRS to ' || dbrole );
 		execute immediate 'grant execute on SYS.DBMS_DRS to ' || dbrole;
 
-		dbms_output.Put_line ('granting select on v_$dg_broker_config to ' || dbrole );
+		--dbms_output.Put_line ('granting select on v_$dg_broker_config to ' || dbrole );
 		execute immediate 'grant select on v_$dg_broker_config to ' || dbrole;
 
 		if (is_db_cdb = 'YES') then
+			dbms_output.Put_line ('granting Oracle DB container DB privs to ' || dbrole);
+
 			execute immediate 'alter user ' || monuser || ' set container_data=all CONTAINER=CURRENT';
 		end if;
 
@@ -510,23 +519,24 @@ begin
 
         /* Privileges that can be added only for DBs above version 12.2 */
 	if (isdb_version_above_122) then
+		dbms_output.Put_line ('granting Oracle DB 12.2+ privs to ' || dbrole);
 
-		dbms_output.Put_line ('granting read on v_$system_parameter to ' || dbrole );
+		--dbms_output.Put_line ('granting read on v_$system_parameter to ' || dbrole );
 		execute immediate 'grant read on v_$system_parameter to ' || dbrole;
 
-		dbms_output.Put_line ('granting read on gv_$system_parameter to ' || dbrole );
+		--dbms_output.Put_line ('granting read on gv_$system_parameter to ' || dbrole );
 		execute immediate 'grant read on gv_$system_parameter to ' || dbrole;
 
-		dbms_output.Put_line ('granting read on v_$rsrcpdbmetric_history to ' || dbrole );
+		--dbms_output.Put_line ('granting read on v_$rsrcpdbmetric_history to ' || dbrole );
 		execute immediate 'grant read on v_$rsrcpdbmetric_history to ' || dbrole;
 
-		dbms_output.Put_line ('granting read on gv_$rsrcpdbmetric_history to ' || dbrole );
+		--dbms_output.Put_line ('granting read on gv_$rsrcpdbmetric_history to ' || dbrole );
 		execute immediate 'grant read on gv_$rsrcpdbmetric_history to ' || dbrole;
 
-		dbms_output.Put_line ('granting read on v_$con_sysmetric_history to ' || dbrole );
+		--dbms_output.Put_line ('granting read on v_$con_sysmetric_history to ' || dbrole );
 		execute immediate 'grant read on v_$con_sysmetric_history to ' || dbrole;
 
-		dbms_output.Put_line ('granting gv_$con_sysmetric_history to ' || dbrole );
+		--dbms_output.Put_line ('granting gv_$con_sysmetric_history to ' || dbrole );
 		execute immediate 'grant read on gv_$con_sysmetric_history to ' || dbrole;
 
 	end if;
@@ -607,12 +617,11 @@ begin
 		execute immediate 'grant select on apps.wf_notification_out to  ' || monuser;
 
 
-		dbms_output.put_line('granting execute on ebs packages to ' || monuser);
+		/*dbms_output.put_line('granting execute on ebs packages to ' || monuser);*/
 
 		execute immediate 'grant execute on apps.fnd_oam_em to ' || monuser;
 
 		execute immediate 'grant execute on apps.fnd_profile to ' || monuser;
-				--dbms_output.put_line('granting permissions for config and compliance pack to ' || monuser);
 
 		execute immediate 'grant execute on apps.fnd_web_config to  ' || monuser;
 
@@ -703,6 +712,8 @@ begin
 	end if;
 
 	-- compliance grants
+	dbms_output.put_line('granting permissions for config and compliance pack to ' || monuser);
+
 	EXECUTE IMMEDIATE 'grant select on dba_tab_privs to ' || monuser;
 
 	EXECUTE IMMEDIATE 'grant select on dba_profiles to ' || monuser;
