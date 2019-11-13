@@ -58,6 +58,7 @@ declare
 	invoked_by_ita BOOLEAN;
 	sql_stmt varchar2 ( 100 ) := 'SELECT CDB from v$database';
 	-- added by Cody for EBS integration
+	profile_exist integer;
 	is_db_ebs boolean;
 	ebs_tbl_cnt number;
     table_not_found EXCEPTION;
@@ -171,6 +172,15 @@ begin
 		monuser := '&1';
 	end if;
 
+	select count(*) into profile_exist from dba_profiles where role=upper('SERVICE_ACCOUNT');
+	if (profile_exist = 0) then
+		dbms_output.Put_line ('create profile service_account');
+		execute immediate 'create profile service_account limit composite_limit default sessions_per_user default cpu_per_session default cpu_per_call default logical_reads_per_session default logical_reads_per_call default	idle_time default connect_time default private_sga default failed_login_attempts unlimited password_life_time unlimited	password_reuse_time unlimited password_reuse_max unlimited password_verify_function null password_lock_time unlimited password_grace_time unlimited';
+	elsif (profile_exist > 0) then
+		dbms_output.Put_line ('alter profile service_account');
+		execute immediate 'alter profile service_account limit composite_limit default sessions_per_user default cpu_per_session default cpu_per_call default logical_reads_per_session default logical_reads_per_call default	idle_time default connect_time default private_sga default failed_login_attempts unlimited password_life_time unlimited	password_reuse_time unlimited password_reuse_max unlimited password_verify_function null password_lock_time unlimited password_grace_time unlimited';
+	end if;
+
 	select count(*) into role_exist from dba_roles where role=upper(dbrole);
 	if (role_exist = 0) then
 		dbms_output.Put_line ('create role ' || dbrole);
@@ -182,11 +192,11 @@ begin
 	if (user_exist = 0) then
 		dbms_output.Put_line ('creating user ' || monuser);
 
-		execute immediate 'create user ' || monuser || ' identified by "&2"';
+		execute immediate 'create user ' || monuser || ' profile service_account identified by "&2"';
 	elsif (user_exist > 0) then
 		dbms_output.Put_line ('altering account ' || monuser);
 
-		execute immediate 'alter user ' || monuser || ' profile serviceaccount account unlock identified by "&2"';
+		execute immediate 'alter user ' || monuser || ' profile service_account account unlock identified by "&2"';
 	end if;
 
        /* Starting Basic  IM privileges */
