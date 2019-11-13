@@ -1,5 +1,5 @@
 ---
-- name: create directories required for installation
+- name: "creating required directories on {{ansible_hostname}}"
   file:
     dest: "{{ item }}"
     state: directory
@@ -11,7 +11,7 @@
   become: yes
   become_user: root
 
-- name: uploading and unarchiving installer
+- name: "uploading and unarchiving cloud agent install files on {{ansible_hostname}}"
   unarchive:
     src: "{{ role_path }}/files/cloudagent_linux.x64.zip"
     dest: "{{ omc_cloudagent_stage_dir }}"
@@ -80,7 +80,7 @@
         - "execute_root_script.rc is defined"
         - "execute_root_script.rc == 0"
   when:
-    - (existing_omc_install.stat.exists == False or omc_cloudagent_reinstall_agent == 'yes')
+    - "(existing_omc_install.stat.exists == True and omc_cloudagent_reinstall_agent == 'yes' and existing_omc_install.stat.pw_name is defined) or (existing_omc_install.stat.exists == False)"
 - name: ensure installed agent is running and configured to start at boot
   block:
     - name: Copy templated initialization script

@@ -1,23 +1,23 @@
 ---
 # tasks file for oracle-omc-cloudagent
-- name: Set facts about installation
+- name: Set basic facts about OMC installation
   include_tasks: facts.yml
-- name: configure OS prerequisites
+- name: Configure OS prerequisites for OMC Cloud Agent
   include_tasks: os.yml
-- name: configure OS level
+- name: Configure OS users & groups required of OMC
   include_tasks: user.yml
-- name: fetch cloud image
+- name: Download latest OMC agent installation file
   include_tasks: fetch.yml
-- name: install agent
+- name: Install OMC Agent
   include_tasks: install.yml
-- name: execute post-installation steps
+- name: "Execute Agent Post Install Steps on {{ansible_hostname}}"
   include_tasks: post-install.yml
-- name: execute database steps
+- name: "Deploying to any runing Oracle databases on {{ansible_hostname}}"
   include_tasks: db-deploy.yml
   when:
     - "omc_cloudagent_databases_monitored is defined"
     - "omc_cloudagent_databases_monitored|length > 0"
-- name: add entity credentials
+- name: "Generating JSON files for monitored entities & credentials on {{ansible_hostname}}"
   include_tasks: entity-deploy.yml
   when:
     - "omc_cloudagent_databases_monitored is defined"
