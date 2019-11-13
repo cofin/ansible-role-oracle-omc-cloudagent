@@ -172,7 +172,7 @@ begin
 		monuser := '&1';
 	end if;
 
-	select count(*) into profile_exist from dba_profiles where role=upper('SERVICE_ACCOUNT');
+	select count(*) into profile_exist from dba_profiles where profile=upper('SERVICE_ACCOUNT');
 	if (profile_exist = 0) then
 		dbms_output.Put_line ('create profile service_account');
 		execute immediate 'create profile service_account limit composite_limit default sessions_per_user default cpu_per_session default cpu_per_call default logical_reads_per_session default logical_reads_per_call default	idle_time default connect_time default private_sga default failed_login_attempts unlimited password_life_time unlimited	password_reuse_time unlimited password_reuse_max unlimited password_verify_function null password_lock_time unlimited password_grace_time unlimited';
