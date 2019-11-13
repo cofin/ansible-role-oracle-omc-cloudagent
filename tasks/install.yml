@@ -35,6 +35,27 @@
       become: yes
       become_user: "{{existing_omc_install.stat.pw_name}}"
       ignore_errors: yes
+
+    - name: Remove existing installation and preparing for re-install
+      become: yes
+      become_user: root
+      file:
+        state: absent
+        path: "{{ item }}"
+        force: yes
+      #ignore_errors: yes
+      with_items:
+        - "{{omc_cloudagent_install_dir}}"
+    - name: "Ensure installation directory exists on {{ansible_hostname}}"
+      file:
+        dest: "{{ item }}"
+        state: directory
+        owner: "{{ omc_cloudagent_user }}"
+        group: "{{ omc_cloudagent_group }}"
+      with_items:
+        - "{{ omc_cloudagent_install_dir }}"
+      become: yes
+      become_user: root
   when:
     - existing_omc_install.stat.exists
     - omc_cloudagent_reinstall_agent
