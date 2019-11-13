@@ -178,7 +178,9 @@ begin
 
 	select count(*) into user_exist from dba_users where username=upper(monuser);
 	if (user_exist = 0) then
-		execute immediate 'create user ' || monuser || ' identified by &2';
+		execute immediate 'create user ' || monuser || ' identified by "&2"';
+	elsif (user_exist > 0) then
+		execute immediate 'alter user ' || monuser || ' profile default account unlock identified by "&2"';
 	end if;
 
        /* Starting Basic  IM privileges */
