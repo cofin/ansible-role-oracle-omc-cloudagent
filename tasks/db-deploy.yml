@@ -11,7 +11,7 @@
 # - name: "working with {{oracle_db.service_name}}"
 #   debug:
 #     msg: ""
-- name: "-> no running database named {{ oracle_db.service_name }} was found"
+- name: "No running database named {{ oracle_db.service_name }} was found"
   debug:
     msg: |
       "Running database process was not found for {{oracle_db.service_name}}.  Skipping deployment"

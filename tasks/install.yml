@@ -21,9 +21,11 @@
   stat:
     path: "{{ omc_cloudagent_install_dir }}/agent_inst/bin/omcli"
   register: existing_omc_install
-# - name: output for debug
-#   debug:
-#     msg: "{{existing_omc_install}}"
+- name: "DEBUG: HELP WITH CONDITIONAL"
+  debug:
+    msg: |
+      existing_omc_install = {{existing_omc_install}}
+      omc_cloudagent_reinstall_agent = {{omc_cloudagent_reinstall_agent}}
 
 - name: "found existing OMC installation"
   block:
@@ -34,7 +36,9 @@
       become_user: "{{existing_omc_install.stat.pw_name}}"
       ignore_errors: yes
   when:
-    - (existing_omc_install.stat.exists == True and omc_cloudagent_reinstall_agent == 'yes' and existing_omc_install.stat.pw_name is defined)
+    - existing_omc_install.stat.exists
+    - omc_cloudagent_reinstall_agent == 'yes'
+    - existing_omc_install.stat.pw_name is defined
 
 - name: Preparing to install agent
   block:
@@ -106,4 +110,4 @@
     - set_fact:
         omc_cloudagent_enabled: yes
   when:
-    - "omc_cloudagent_installed is defined and omc_cloudagent_installed == True"
+    - "omc_cloudagent_installed is defined and omc_cloudagent_installed"
