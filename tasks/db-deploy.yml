@@ -39,9 +39,7 @@
       become: yes
       become_user: "{{oracle_db_owner}}"
       failed_when:
-        - "(db_user_deployment.rc is defined and db_user_deployment.rc == 0 and 'ORA-' in db_user_deployment.stdout)"
-        - "or (db_user_deployment.rc is defined and db_user_deployment.rc == 0 and 'Resetting ORACLE_BASE to its previous value or ORACLE_HOME' in db_user_deployment.stdout)"
-        - "or (db_user_deployment.rc is defined and db_user_deployment.rc > 0)"
+        - "((db_user_deployment.rc is defined and db_user_deployment.rc == 0 and 'ORA-' in db_user_deployment.stdout) or (db_user_deployment.rc is defined and db_user_deployment.rc == 0 and 'Resetting ORACLE_BASE to its previous value' in db_user_deployment.stdout) or (db_user_deployment.rc is defined and db_user_deployment.rc > 0))"
       run_once: yes
       ignore_errors: yes
   when:
