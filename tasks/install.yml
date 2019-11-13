@@ -21,11 +21,11 @@
   stat:
     path: "{{ omc_cloudagent_install_dir }}/agent_inst/bin/omcli"
   register: existing_omc_install
-- name: "DEBUG: HELP WITH CONDITIONAL"
-  debug:
-    msg: |
-      existing_omc_install = {{existing_omc_install}}
-      omc_cloudagent_reinstall_agent = {{omc_cloudagent_reinstall_agent}}
+# - name: "DEBUG: HELP WITH CONDITIONAL"
+#   debug:
+#     msg: |
+#       existing_omc_install = {{existing_omc_install}}
+#       omc_cloudagent_reinstall_agent = {{omc_cloudagent_reinstall_agent}}
 
 - name: "found existing OMC installation"
   block:
