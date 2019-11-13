@@ -1,0 +1,46 @@
+{"entities": [
+{% for db in omc_cloudagent_databases_monitored %}
+    {
+      "name": "{{db.name}}",
+      "type": "omc_oracle_db_system",
+      "displayName": "{{db.name}}",
+      "timezoneRegion": "America/Chicago",
+      "credentialRefs": ["SQLCreds", "ASMCredsNormal"],
+      "properties": {
+        "omc_dbsys_config": {
+            "displayName": "Configuration for DB System",
+            "value": "RAC"
+        },
+        "omc_dbsys_name_qualifier": {
+            "displayName" : "Name Prefix",
+            "value": ""
+        },
+        "omc_db_system_scan_name":
+        {
+            "displayName": "SCAN Name",
+            "value": "{{db.db_host}}"
+        },
+        "omc_dbsys_port": {
+            "displayName": "SCAN Port",
+            "value": "{{db.db_port}}"
+        },
+        "omc_dbsys_connect_type": {
+            "displayName": "Connect Type",
+            "value": "Service Name"
+        },
+        "omc_dbsys_connect_value": {
+            "displayName": "Service Name",
+            "value": "{{db.service_name}}"
+        },
+        "omc_dbsys_home": {
+            "displayName": "Grid home",
+            "value": "{{oracle_asm_grid_home}}"
+        },
+        "capability": {
+            "displayName": "capability",
+            "value": "monitoring"
+        }
+      }
+    }{% if not loop.last %},{%endif%}
+{% endfor %}
+]}
