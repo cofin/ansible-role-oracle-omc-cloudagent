@@ -1,21 +1,4 @@
 ---
-- name: "creating required directories on {{ansible_hostname}}"
-  file:
-    dest: "{{ item }}"
-    state: directory
-    owner: "{{ omc_cloudagent_user }}"
-    group: "{{ omc_cloudagent_group }}"
-  with_items:
-    - "{{ omc_cloudagent_stage_dir }}"
-    - "{{ omc_cloudagent_install_dir }}"
-  become: yes
-  become_user: root
-
-- name: "uploading and unarchiving cloud agent install files on {{ansible_hostname}}"
-  unarchive:
-    src: "{{ role_path }}/files/cloudagent_linux.x64.zip"
-    dest: "{{ omc_cloudagent_stage_dir }}"
-  tags: install
 
 - name: determine if there is an existing installation
   stat:
@@ -46,16 +29,7 @@
       #ignore_errors: yes
       with_items:
         - "{{omc_cloudagent_install_dir}}"
-    - name: "Ensure installation directory exists on {{ansible_hostname}}"
-      file:
-        dest: "{{ item }}"
-        state: directory
-        owner: "{{ omc_cloudagent_user }}"
-        group: "{{ omc_cloudagent_group }}"
-      with_items:
-        - "{{ omc_cloudagent_install_dir }}"
-      become: yes
-      become_user: root
+
   when:
     - existing_omc_install.stat.exists
     - omc_cloudagent_reinstall_agent
@@ -63,6 +37,25 @@
 
 - name: Preparing to install agent
   block:
+
+    - name: "creating required directories on {{ansible_hostname}}"
+      file:
+        dest: "{{ item }}"
+        state: directory
+        owner: "{{ omc_cloudagent_user }}"
+        group: "{{ omc_cloudagent_group }}"
+      with_items:
+        - "{{ omc_cloudagent_stage_dir }}"
+        - "{{ omc_cloudagent_install_dir }}"
+      become: yes
+      become_user: root
+
+    - name: "uploading and unarchiving cloud agent install files on {{ansible_hostname}}"
+      unarchive:
+        src: "{{ role_path }}/files/cloudagent_linux.x64.zip"
+        dest: "{{ omc_cloudagent_stage_dir }}"
+      tags: install
+
     - name: installing omc cloudagent
       shell: |
         sh {{ omc_cloudagent_install_cmd }}
