@@ -37,7 +37,7 @@
       ignore_errors: yes
   when:
     - existing_omc_install.stat.exists
-    - omc_cloudagent_reinstall_agent == 'yes'
+    - omc_cloudagent_reinstall_agent
     - existing_omc_install.stat.pw_name is defined
 
 - name: Preparing to install agent
@@ -75,7 +75,7 @@
         - "install_omc_cloudagent.rc is defined"
         - "install_omc_cloudagent.rc == 0"
 
-    - name: set flag to indicate this block was successful
+    - name: OMC cloud agent installation completed successfully.
       set_fact:
         omc_cloudagent_installed: yes
       when:
@@ -84,7 +84,7 @@
         - "execute_root_script.rc is defined"
         - "execute_root_script.rc == 0"
   when:
-    - "(existing_omc_install.stat.exists == True and omc_cloudagent_reinstall_agent == 'yes' and existing_omc_install.stat.pw_name is defined) or (existing_omc_install.stat.exists == False)"
+    - "(existing_omc_install.stat.exists and omc_cloudagent_reinstall_agent and existing_omc_install.stat.pw_name is defined) or (existing_omc_install.stat.exists == False)"
 - name: ensure installed agent is running and configured to start at boot
   block:
     - name: Copy templated initialization script
