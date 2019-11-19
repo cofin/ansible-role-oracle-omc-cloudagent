@@ -8,9 +8,9 @@
         AGENT_BASE_DIRECTORY={{ omc_cloudagent_install_dir }} \
         AGENT_PORT={{ omc_cloudagent_agent_port }} \
         OMC_URL={{ omc_cloudagent_url_endpoint }} \
-        GATEWAY_HOST={{ omc_cloudagent_gateway_host }} \
-        GATEWAY_PORT={{ omc_cloudagent_gateway_port }} \
-        ADDITIONAL_GATEWAYS={{ omc_cloudagent_additional_gateways }} \
+        {% if omc_cloudagent_gateway_host|length > 0 %}GATEWAY_HOST={{ omc_cloudagent_gateway_host }} \{% endif %}
+        {% if omc_cloudagent_gateway_port|length > 0 %}GATEWAY_PORT={{ omc_cloudagent_gateway_port }} \{% endif %}
+        {% if omc_cloudagent_additional_gateways|length > 0 %}ADDITIONAL_GATEWAYS={{ omc_cloudagent_additional_gateways }} \{% endif %}
         REINSTALL={% if omc_cloudagent_reinstall_agent %}TRUE{% else %}FALSE{% endif %}
     omc_cloudagent_user: "{{omc_cloudagent_users.0.username }}"
     omc_cloudagent_group: "{{omc_cloudagent_users.0.group }}"
