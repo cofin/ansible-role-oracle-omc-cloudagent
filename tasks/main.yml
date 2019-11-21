@@ -10,14 +10,16 @@
   include_tasks: fetch.yml
 - name: Install OMC Agent
   include_tasks: install.yml
-- name: "Execute Agent Post Install Steps on {{ansible_hostname}}"
+- name: "Execute Agent Post Install Steps"
   include_tasks: post-install.yml
-- name: "Deploying to any runing Oracle databases on {{ansible_hostname}}"
+- name: "Deploying to running ASM instance"
+  include_tasks: asm.yml
+- name: "Deploying to any runing Oracle databases on"
   include_tasks: db.yml
   when:
     - "omc_cloudagent_databases_monitored is defined"
     - "omc_cloudagent_databases_monitored|length > 0"
-- name: "Generating JSON files for monitored entities & credentials on {{ansible_hostname}}"
+- name: "Generating JSON files for monitored entities & credentials"
   include_tasks: entity-deploy.yml
   when:
     - "omc_cloudagent_databases_monitored is defined"

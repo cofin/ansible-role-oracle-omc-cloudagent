@@ -1,62 +1,34 @@
 ---
-- name: output yaml to json as a test
-  debug:
-    msg: |
-      {{ omc_cloudagent_credentials | to_nice_json }}
+- name: deploying ASM entities
+  block:
+    - name: copy ASM credentials JSON to server
+      template:
+        src: "{{ role_path }}/templates/asm-creds.json.j2"
+        dest: "{{ omc_cloudagent_stage_dir }}/asm-creds.json"
+        owner: "{{ omc_cloudagent_user }}"
+        group: "{{  omc_cloudagent_users_group }}"
+        mode: 0755
+    - name: copy ASM entity JSON to server
+      template:
+        src: "{{ role_path }}/templates/asm-entity.json.j2"
+        dest: "{{ omc_cloudagent_stage_dir }}/asm-entity.json"
+        owner: "{{ omc_cloudagent_user }}"
+        group: "{{  omc_cloudagent_users_group }}"
+        mode: 0755
+    - name: Deploy ASM Entity
+      shell: |
+        sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli add_entity agent {{ omc_cloudagent_stage_dir }}/asm-entity.json -credential_file {{ omc_cloudagent_stage_dir }}/asm-creds.json
+      args:
+        chdir: "{{ omc_cloudagent_stage_dir }}"
+      become: yes
+      become_user: "{{omc_cloudagent_user}}"
+      run_once: yes
+  when:
+    - oracle_asm_exists is defined
+    - oracle_asm_exists
 
 
 
-- name: Identify owner of ASM instance
-  environment:
-    ORACLE_DB: "ASM"
-  shell: |
-    ps aux | grep pmon | grep -v grep | grep "$ORACLE_DB" | awk '{print $1}'
-  register: ps_asm_owner
-- name: Identify SID for ASM instance
-  environment:
-    ORACLE_DB: "ASM"
-  shell: |
-    cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep "$ORACLE_DB" | head -1 | cut -f1 -d: -s
-  register: ps_asm_sid
-- name: Identify grid home for ASM instance
-  environment:
-    ORACLE_DB: "ASM"
-  shell: |
-    cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep "$ORACLE_DB" | head -1 | cut -f2 -d: -s
-  register: ps_asm_grid_home
-- name: Set FQDN of hostname
-  shell: |
-    hostname -f
-  register: hostname_fdqn_asm
-# - name: successfully fetched ASM data, proceeding with entity config
-#   block:
-#   when:
-#     - ps_asm_grid_home.stdout is defined
-#     - ps_asm_owner.stdout is defined
-#     - ps_asm_sid.stdout is defined
-#     - ps_asm_grid_home.stdout != ''
-#     - ps_asm_owner.stdout != ''
-#     - ps_asm_sid.stdout != ''
-- name: set facts for ASM instance
-  set_fact:
-    oracle_asm_grid_home: "{{ps_asm_grid_home.stdout}}"
-    oracle_asm_owner: "{{ps_asm_owner.stdout}}"
-    oracle_asm_sid: "{{ps_asm_sid.stdout}}"
-    oracle_asm_hostname: "{{hostname_fdqn_asm.stdout}}"
-- name: copy ASM credentials JSON to server
-  template:
-    src: "{{ role_path }}/templates/asm-creds.json.j2"
-    dest: "{{ omc_cloudagent_stage_dir }}/asm-creds.json"
-    owner: "{{ omc_cloudagent_user }}"
-    group: "{{  omc_cloudagent_users_group }}"
-    mode: 0755
-- name: copy ASM entity JSON to server
-  template:
-    src: "{{ role_path }}/templates/asm-entity.json.j2"
-    dest: "{{ omc_cloudagent_stage_dir }}/asm-entity.json"
-    owner: "{{ omc_cloudagent_user }}"
-    group: "{{  omc_cloudagent_users_group }}"
-    mode: 0755
 - name: copy Oracle DB credentials JSON to server
   template:
     src: "{{ role_path }}/templates/oracle-db-creds.json.j2"
