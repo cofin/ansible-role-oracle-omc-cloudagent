@@ -13,9 +13,9 @@ omc_cloudagent_required_packages:
   - bc
   #- setarch
   #- jq
-  - redhat-lsb-core
-  - openscap
-  - scap-security-guide
+  # - redhat-lsb-core
+  # - openscap
+  # - scap-security-guide
 
 omc_cloudagent_authorized_keys_file: ".ssh/authorized_keys"
 
