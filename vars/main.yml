@@ -12,7 +12,7 @@ omc_cloudagent_users_create_homedirs: yes
 omc_cloudagent_required_packages:
   - bc
   #- setarch
-  - jq
+  #- jq
   - redhat-lsb-core
   - openscap
   - scap-security-guide

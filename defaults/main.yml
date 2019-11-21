@@ -49,64 +49,64 @@ omc_cloudagent_db_user: "OMC_MON"
 omc_cloudagent_db_password: "P4ssw0rd"
 omc_cloudagent_asm_user: "OMC_MON"
 omc_cloudagent_asm_password: "P4ssw0rd"
-omc_cloudagent_asm_name: "ASM"
-omc_cloudagent_credentials:
-  - id: "ASMCredsNormal"
-    name: "ASMCredsMonitoring"
-    credType: "ASMCreds"
-    properties:
-      - { name: "user_name", "value": "CLEAR[{{omc_cloudagent_asm_user}}]"}
-      - { name: "password", "value": "CLEAR[{{omc_cloudagent_asm_password}}]"}
-      - { name: "role", "value": "CLEAR[SYSASM]"}
-  - id: "SQLCreds"
-    name: "SQLCredsMonitoring"
-    credType: "DBCreds"
-    properties:
-      - { name: "user_name", "value": "CLEAR[{{omc_cloudagent_asm_user}}]"}
-      - { name: "password", "value": "CLEAR[{{omc_cloudagent_asm_password}}]"}
-      - { name: "role", "value": "CLEAR[Normal]"}
-omc_cloudagent_entities_monitored:
-  - name: "DBA_Tools/Database"
-    type: ""
-    displayName: "DBA_Tools/Database"
-    timezoneRegion: "America/Chicago"
-    credentialRefs:
-      - "SQLCredsMonitoring"
-    properties:
-      - host_name:
-        - { displayName: "", value: "" }
-      - port:
-        - { displayName: "", value: "" }
-      - service_name:
-        - { displayName: "", value: "" }
-      - capability:
-        - { displayName: "", value: "" }
-omc_cloudagent_databases:
-  - name: ""
-    type: ""
-    displayName: ""
-    timezoneRegion: ""
-    credentialRefs:
-      - ""
-    properties:
-      - host_name:
-        - { displayName: "", value: "" }
-      - port:
-        - { displayName: "", value: "" }
-      - service_name:
-        - { displayName: "", value: "" }
-      - capability:
-        - { displayName: "", value: "" }
+omc_cloudagent_asm_service: "+ASM"
+# omc_cloudagent_credentials:
+#   - id: "ASMCredsNormal"
+#     name: "ASMCredsMonitoring"
+#     credType: "ASMCreds"
+#     properties:
+#       - { name: "user_name", "value": "CLEAR[{{omc_cloudagent_asm_user}}]"}
+#       - { name: "password", "value": "CLEAR[{{omc_cloudagent_asm_password}}]"}
+#       - { name: "role", "value": "CLEAR[SYSASM]"}
+#   - id: "SQLCreds"
+#     name: "SQLCredsMonitoring"
+#     credType: "DBCreds"
+#     properties:
+#       - { name: "user_name", "value": "CLEAR[{{omc_cloudagent_asm_user}}]"}
+#       - { name: "password", "value": "CLEAR[{{omc_cloudagent_asm_password}}]"}
+#       - { name: "role", "value": "CLEAR[Normal]"}
+# omc_cloudagent_entities_monitored:
+#   - name: "DBA_Tools/Database"
+#     type: ""
+#     displayName: "DBA_Tools/Database"
+#     timezoneRegion: "America/Chicago"
+#     credentialRefs:
+#       - "SQLCredsMonitoring"
+#     properties:
+#       - host_name:
+#         - { displayName: "", value: "" }
+#       - port:
+#         - { displayName: "", value: "" }
+#       - service_name:
+#         - { displayName: "", value: "" }
+#       - capability:
+#         - { displayName: "", value: "" }
+# omc_cloudagent_databases:
+#   - name: ""
+#     type: ""
+#     displayName: ""
+#     timezoneRegion: ""
+#     credentialRefs:
+#       - ""
+#     properties:
+#       - host_name:
+#         - { displayName: "", value: "" }
+#       - port:
+#         - { displayName: "", value: "" }
+#       - service_name:
+#         - { displayName: "", value: "" }
+#       - capability:
+#         - { displayName: "", value: "" }
 
 
-omc_cloudagent_deploy_apm: no
-omc_cloudagent_asm_credentials:
- - { name: "ASMCredsMonitoring", user: "", password: "", role: "" }
-omc_cloudagent_db_credentials_name:
- - { name: "SQLCredsMonitoring", user: "", password: "", role: "" }
+# omc_cloudagent_deploy_apm: no
+# omc_cloudagent_asm_credentials:
+#  - { name: "ASMCredsMonitoring", user: "", password: "", role: "" }
+# omc_cloudagent_db_credentials_name:
+#  - { name: "SQLCredsMonitoring", user: "", password: "", role: "" }
 
-omc_cloudagent_ebs_entities:
-omc_cloudagent_asm_entities:
-  - { name: "Midland_Exadata/ASM", display_name: "Midland_Exadata/ASM",  host: "examiddbadm01.us", port: 1521, service_name: "dbatools"}
-omc_cloudagent_database_entities:
-  - { db_name: "dbatools", display_name: "DBA_Tools/Database",  host: "examid-scan.us.pioneernrc.pvt", port: 1521, service_name: "dbatools"}
+# omc_cloudagent_ebs_entities:
+# omc_cloudagent_asm_entities:
+#   - { name: "Midland_Exadata/ASM", display_name: "Midland_Exadata/ASM",  host: "examiddbadm01.us", port: 1521, service_name: "dbatools"}
+# omc_cloudagent_database_entities:
+#   - { db_name: "dbatools", display_name: "DBA_Tools/Database",  host: "examid-scan.us.pioneernrc.pvt", port: 1521, service_name: "dbatools"}
