@@ -6,14 +6,14 @@
         src: "{{ role_path }}/templates/asm-creds.json.j2"
         dest: "{{ omc_cloudagent_stage_dir }}/asm-creds.json"
         owner: "{{ omc_cloudagent_user }}"
-        group: "{{  omc_cloudagent_users_group }}"
+        group: "{{  omc_cloudagent_group }}"
         mode: 0755
     - name: copy ASM entity JSON to server
       template:
         src: "{{ role_path }}/templates/asm-entity.json.j2"
         dest: "{{ omc_cloudagent_stage_dir }}/asm-entity.json"
         owner: "{{ omc_cloudagent_user }}"
-        group: "{{  omc_cloudagent_users_group }}"
+        group: "{{  omc_cloudagent_group }}"
         mode: 0755
     - name: Deploy ASM Entity
       shell: |
@@ -35,14 +35,14 @@
         src: "{{ role_path }}/templates/oracle-db-creds.json.j2"
         dest: "{{ omc_cloudagent_stage_dir }}/oracle-db-creds.json"
         owner: "{{ omc_cloudagent_user }}"
-        group: "{{  omc_cloudagent_users_group }}"
+        group: "{{  omc_cloudagent_group }}"
         mode: 0755
     - name: copy Oracle DB entity JSON to server
       template:
         src: "{{ role_path }}/templates/oracle-db-entity.json.j2"
         dest: "{{ omc_cloudagent_stage_dir }}/oracle-db-entity.json"
         owner: "{{ omc_cloudagent_user }}"
-        group: "{{  omc_cloudagent_users_group }}"
+        group: "{{  omc_cloudagent_group }}"
         mode: 0755
     - name: Deploy database entities
       shell: |

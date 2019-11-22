@@ -23,12 +23,22 @@
       shell: |
         hostname -f
       register: hostname_fdqn_asm
+    - name: identify primary group for ASM grid user
+      shell: |
+        id -gn {{ps_asm_owner.stdout}}
+      register: id_group_name_asm
+    - name: identify primary group for ASM grid user
+      shell: |
+        id -g {{ps_asm_owner.stdout}}
+      register: id_group_id_asm
     - name: set facts for ASM instance
       set_fact:
         oracle_asm_grid_home: "{{ps_asm_grid_home.stdout}}"
         oracle_asm_owner: "{{ps_asm_owner.stdout}}"
         oracle_asm_sid: "{{ps_asm_sid.stdout}}"
         oracle_asm_hostname: "{{hostname_fdqn_asm.stdout}}"
+        oracle_asm_group: "{{id_group_name_asm.stdout}}"
+        oracle_asm_group_id: "{{id_group_id_asm.stdout}}"
         oracle_asm_exists: yes
     - name: "deploy OMC monitoring user on {{ oracle_asm_sid}}"
       environment:
