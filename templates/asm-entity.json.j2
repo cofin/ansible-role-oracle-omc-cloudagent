@@ -1,9 +1,10 @@
 {
     "entities": [
+{% for asm in omc_cloudagent_oracle_asm_entities %}
     {
-      "name": "Midland_Exadata/ASM",
+      "name": "{{asm.name}}/ASM",
       "type": "omc_oracle_asm",
-      "displayName": "Midland_Exadata/ASM",
+      "displayName": "{{asm.name}}/ASM",
       "timezoneRegion": "America/Chicaco",
       "credentialRefs": ["ASMCredsNormal"],
       "properties": {
@@ -39,9 +40,9 @@
       }
     },
     {
-      "name": "Midland_Exadata/Listener",
+      "name": "{{asm.name}}/Listener",
       "type": "omc_oracle_db_listener_cluster",
-      "displayName": "Midland_Exadata/Listener",
+      "displayName": "{{asm.name}}/Listener",
       "properties": {
         "omc_use_ssh": {
           "displayName": "USE ssh",
@@ -64,5 +65,6 @@
           "value": "monitoring"
         }
       }
-    }]
+    }{% if not loop.last %}, {%endif%}
+{% endfor %}]
 }
