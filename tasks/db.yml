@@ -9,7 +9,7 @@
   tags: install
 - name: deploy OMC user for defined databases
   include_tasks: db-deploy.yml
-  loop: "{{ omc_cloudagent_databases_monitored }}"
+  loop: "{{ omc_cloudagent_oracle_db_entities }}"
   loop_control:
     loop_var: oracle_db
 # - name: removing script

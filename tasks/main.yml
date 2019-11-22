@@ -14,10 +14,13 @@
   include_tasks: post-install.yml
 - name: "Deploying to running ASM instance"
   include_tasks: asm.yml
+  when:
+    - "omc_cloudagent_oracle_asm_entities is defined"
+    - "omc_cloudagent_oracle_asm_entities|length > 0"
 - name: "Deploying to any runing Oracle databases on"
   include_tasks: db.yml
   when:
-    - "omc_cloudagent_databases_monitored is defined"
-    - "omc_cloudagent_databases_monitored|length > 0"
+    - "omc_cloudagent_oracle_db_entities is defined"
+    - "omc_cloudagent_oracle_db_entities|length > 0"
 - name: "Generating JSON files for monitored entities & credentials"
   include_tasks: entity-deploy.yml

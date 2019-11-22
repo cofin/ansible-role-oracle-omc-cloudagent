@@ -1,6 +1,6 @@
 - name: Identify if there is a running ASM instance
   environment:
-    ORACLE_DB: "ASM"
+    ORACLE_DB: "{{oracle_asm.service_name}}"
   shell: |
     ps aux | grep pmon | grep -v grep | grep "$ORACLE_DB" | awk '{print $1}'
   register: ps_asm_owner
@@ -9,13 +9,13 @@
   block:
     - name: Fetch SID
       environment:
-        ORACLE_DB: "ASM"
+        ORACLE_DB: "{{oracle_asm.service_name}}"
       shell: |
         cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep "$ORACLE_DB" | head -1 | cut -f1 -d: -s
       register: ps_asm_sid
     - name: Locate grid home for ASM instance
       environment:
-        ORACLE_DB: "ASM"
+        ORACLE_DB: "{{oracle_asm.service_name}}"
       shell: |
         cat /etc/oratab | grep -v "^#" | grep -v "N$" | grep "$ORACLE_DB" | head -1 | cut -f2 -d: -s
       register: ps_asm_grid_home
@@ -33,6 +33,7 @@
       register: id_group_id_asm
     - name: set facts for ASM instance
       set_fact:
+        oracle_asm_service_name: "{{oracle_asm.service_name}}"
         oracle_asm_grid_home: "{{ps_asm_grid_home.stdout}}"
         oracle_asm_owner: "{{ps_asm_owner.stdout}}"
         oracle_asm_sid: "{{ps_asm_sid.stdout}}"
@@ -40,14 +41,7 @@
         oracle_asm_group: "{{id_group_name_asm.stdout}}"
         oracle_asm_group_id: "{{id_group_id_asm.stdout}}"
         oracle_asm_exists: yes
-    - name: Copy ASM User Creation Scipt to Server
-      copy:
-        src: "{{role_path}}/files/grantAsmPrivileges.sql"
-        dest: "{{ omc_cloudagent_stage_dir }}"
-        owner: "{{omc_cloudagent_user}}"
-        group: "{{omc_cloudagent_group}}"
-        mode: 0777
-      tags: install
+
     - name: "deploy OMC monitoring user on {{ oracle_asm_sid}}"
       environment:
         ORACLE_DB: "{{oracle_asm_sid}}"

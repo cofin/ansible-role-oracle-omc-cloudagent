@@ -24,8 +24,8 @@
       become_user: "{{omc_cloudagent_user}}"
       run_once: yes
   when:
-    - oracle_asm_exists is defined
-    - oracle_asm_exists
+    - "omc_cloudagent_oracle_asm_entities is defined"
+    - "omc_cloudagent_oracle_asm_entities|length > 0"
 
 - name: deploying Oracle DB entities
   block:
@@ -53,5 +53,5 @@
       become_user: "{{omc_cloudagent_user}}"
       run_once: yes
   when:
-    - "omc_cloudagent_databases_monitored is defined"
-    - "omc_cloudagent_databases_monitored|length > 0"
+    - "omc_cloudagent_oracle_db_entities is defined"
+    - "omc_cloudagent_oracle_db_entities|length > 0"

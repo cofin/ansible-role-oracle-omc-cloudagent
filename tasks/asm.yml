@@ -1,4 +1,13 @@
 ---
-
+- name: Copy ASM User Creation Scipt to Server
+  copy:
+    src: "{{role_path}}/files/grantAsmPrivileges.sql"
+    dest: "{{ omc_cloudagent_stage_dir }}"
+    owner: "{{omc_cloudagent_user}}"
+    group: "{{omc_cloudagent_group}}"
+    mode: 0777
 - name: Configure ASM if detected
   include_tasks: asm-deploy.yml
+  loop: "{{ omc_cloudagent_oracle_asm_entities }}"
+  loop_control:
+    loop_var: oracle_asm

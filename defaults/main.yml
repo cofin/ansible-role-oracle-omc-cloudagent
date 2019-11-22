@@ -106,7 +106,7 @@ omc_cloudagent_asm_service: "+ASM"
 #  - { name: "SQLCredsMonitoring", user: "", password: "", role: "" }
 
 # omc_cloudagent_ebs_entities:
-# omc_cloudagent_asm_entities:
-#   - { name: "Midland_Exadata/ASM", display_name: "Midland_Exadata/ASM",  host: "examiddbadm01.us", port: 1521, service_name: "dbatools"}
-# omc_cloudagent_database_entities:
-#   - { db_name: "dbatools", display_name: "DBA_Tools/Database",  host: "examid-scan.us.pioneernrc.pvt", port: 1521, service_name: "dbatools"}
+omc_cloudagent_oracle_asm_entities: []
+# - { name: "Ashburn_Exadata_Non-Production/ASM", display_name: "Ashburn_Exadata_Non-Production/ASM", service_name: "+ASM" }
+omc_cloudagent_oracle_db_entities: []
+# - { db_name: "dbatools", display_name: "DBA_Tools/Database",  host: "examid-scan.us.pioneernrc.pvt", port: 1521, service_name: "dbatools"}
