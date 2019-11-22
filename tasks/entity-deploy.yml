@@ -27,19 +27,31 @@
     - oracle_asm_exists is defined
     - oracle_asm_exists
 
+- name: deploying Oracle DB entities
+  block:
 
-
-- name: copy Oracle DB credentials JSON to server
-  template:
-    src: "{{ role_path }}/templates/oracle-db-creds.json.j2"
-    dest: "{{ omc_cloudagent_stage_dir }}/oracle-db-creds.json"
-    owner: "{{ omc_cloudagent_user }}"
-    group: "{{  omc_cloudagent_users_group }}"
-    mode: 0755
-- name: copy Oracle DB entity JSON to server
-  template:
-    src: "{{ role_path }}/templates/oracle-db-entity.json.j2"
-    dest: "{{ omc_cloudagent_stage_dir }}/oracle-db-entity.json"
-    owner: "{{ omc_cloudagent_user }}"
-    group: "{{  omc_cloudagent_users_group }}"
-    mode: 0755
+    - name: copy Oracle DB credentials JSON to server
+      template:
+        src: "{{ role_path }}/templates/oracle-db-creds.json.j2"
+        dest: "{{ omc_cloudagent_stage_dir }}/oracle-db-creds.json"
+        owner: "{{ omc_cloudagent_user }}"
+        group: "{{  omc_cloudagent_users_group }}"
+        mode: 0755
+    - name: copy Oracle DB entity JSON to server
+      template:
+        src: "{{ role_path }}/templates/oracle-db-entity.json.j2"
+        dest: "{{ omc_cloudagent_stage_dir }}/oracle-db-entity.json"
+        owner: "{{ omc_cloudagent_user }}"
+        group: "{{  omc_cloudagent_users_group }}"
+        mode: 0755
+    - name: Deploy database entities
+      shell: |
+        sh {{omc_cloudagent_install_dir}}/agent_inst/bin/omcli add_entity agent {{ omc_cloudagent_stage_dir }}/oracle-db-entity.json -credential_file {{ omc_cloudagent_stage_dir }}/oracle-db-creds.json
+      args:
+        chdir: "{{ omc_cloudagent_stage_dir }}"
+      become: yes
+      become_user: "{{omc_cloudagent_user}}"
+      run_once: yes
+  when:
+    - "omc_cloudagent_databases_monitored is defined"
+    - "omc_cloudagent_databases_monitored|length > 0"

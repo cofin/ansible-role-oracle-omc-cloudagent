@@ -21,6 +21,3 @@
     - "omc_cloudagent_databases_monitored|length > 0"
 - name: "Generating JSON files for monitored entities & credentials"
   include_tasks: entity-deploy.yml
-  when:
-    - "omc_cloudagent_databases_monitored is defined"
-    - "omc_cloudagent_databases_monitored|length > 0"
