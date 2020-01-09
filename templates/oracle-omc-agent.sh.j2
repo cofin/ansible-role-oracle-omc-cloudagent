@@ -4,18 +4,27 @@ PID_FILE={{omc_cloudagent_pid_dir}}/agent.pid
 
 start() {
   if [ -f $SCRIPT ]; then
+    RUNAS=$(stat -c '%U' $SCRIPT)
     echo 'Starting Oracle OMC CloudAgent' >&2
-    $SCRIPT start agent
+    su $RUNAS -c "$SCRIPT start agent"
     echo 'Oracle OMC CloudAgent started.  Setting PID' >&2
+    if [ -f $PID_FILE ]; then
+      rm $PID_FILE
+    fi
     $SCRIPT status agent | grep Process | grep -v Parent | awk '{print $4}' > $PID_FILE
+    PID=$(cat $PID_FILE)
   fi
 }
 
 stop() {
   if [ -f $SCRIPT ]; then
+    RUNAS=$(stat -c '%U' $SCRIPT)
     echo 'Stopping Oracle OMC CloudAgent' >&2
-    $SCRIPT stop agent
+    su $RUNAS -c "$SCRIPT stop agent"
     echo 'Oracle OMC CloudAgent stopped.' >&2
+    if [ -f $PID_FILE ]; then
+      rm $PID_FILE
+    fi
   fi
 }
 
