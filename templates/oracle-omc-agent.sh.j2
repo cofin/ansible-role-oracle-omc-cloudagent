@@ -1,30 +1,21 @@
 #!/bin/sh
-### BEGIN INIT INFO
-# Provides:          Oracle OMC CloudAgent
-# Required-Start:    $local_fs $network $named $time $syslog
-# Required-Stop:     $local_fs $network $named $time $syslog
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Description:       OMC CloudAgent Daemon
-### END INIT INFO
-
 SCRIPT={{omc_cloudagent_install_dir}}/agent_inst/bin/omcli
+PID_FILE={{omc_cloudagent_pid_dir}}/agent.pid
 
 start() {
   if [ -f $SCRIPT ]; then
-    RUNAS=$(stat -c '%U' $SCRIPT)
     echo 'Starting Oracle OMC CloudAgent' >&2
-    su $RUNAS -c "$SCRIPT start agent"
-    echo 'Oracle OMC CloudAgent started' >&2
+    $SCRIPT start agent
+    echo 'Oracle OMC CloudAgent started.  Setting PID' >&2
+    $SCRIPT status agent | grep Process | grep -v Parent | awk '{print $4}' > $PID_FILE
   fi
 }
 
 stop() {
   if [ -f $SCRIPT ]; then
-    RUNAS=$(stat -c '%U' $SCRIPT)
     echo 'Stopping Oracle OMC CloudAgent' >&2
-    su $RUNAS -c "$SCRIPT stop agent"
-    echo 'Oracle OMC CloudAgent stopped' >&2
+    $SCRIPT stop agent
+    echo 'Oracle OMC CloudAgent stopped.' >&2
   fi
 }
 
@@ -36,12 +27,6 @@ case "$1" in
   stop)
     stop
     ;;
-  retart)
-    stop
-    echo "Preparing to restart."
-    sleep 1
-    start
-    ;;
   *)
-    echo "Usage: $0 {start|stop|restart}"
+    echo "Usage: $0 {start|stop}"
 esac

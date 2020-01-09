@@ -101,16 +101,37 @@
 
 # start at boot
 # TO DO: convert to systemd
+- name: "creating required directories on {{ansible_hostname}}"
+  file:
+    dest: "{{ item }}"
+    state: directory
+    owner: "{{ omc_cloudagent_user }}"
+    group: "{{ omc_cloudagent_group }}"
+  with_items:
+    - "{{ omc_cloudagent_script_dir }}"
+    - "{{ omc_cloudagent_pid_dir }}"
+  become: yes
+  become_user: root
 - name: Copy templated initialization script
   template:
     src: "{{ role_path }}/templates/oracle-omc-agent.sh.j2"
-    dest: /etc/init.d/oracle-omc-agent
+    dest: "{{ omc_cloudagent_script_dir }}/oracle-omc-agent.sh"
+    owner: "{{ omc_cloudagent_user }}"
+    group: "{{ omc_cloudagent_group }}"
+    mode: 0740
+
+- name: Copy templated systemd unit file
+  template:
+    src: "{{ role_path }}/templates/oracle-omc-agent.service.j2"
+    dest: "/etc/systemd/system/oracle-omc-agent.service"
     owner: root
     group: root
     mode: 0740
 
 - name: Enable and start at boot
-  service:
+  systemd:
+    daemon_reload: yes
+    force: yes
     name: oracle-omc-agent
     state: started
     enabled: yes

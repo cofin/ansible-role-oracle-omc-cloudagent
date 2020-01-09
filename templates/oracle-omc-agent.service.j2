@@ -1,0 +1,18 @@
+[Unit]
+Description=Peoplesoft App Service
+After=network.target
+
+[Service]
+Type=forking
+User={{omc_cloudagent_user}}
+Group={{omc_cloudagent_group}}
+ExecStart={{omc_cloudagent_script_dir}}/oracle-omc-agent.sh start
+ExecStop={{omc_cloudagent_script_dir}}/oracle-omc-agent.sh stop
+
+# Restart the service on non-zero exit code when terminated by a signal other than SIGHUP, SIGINT, SIGTERM or SIGPIPE
+Restart=on-failure
+RestartSec=30
+PIDFile={{ omc_cloudagent_pid_dir}}/agent.pid
+
+[Install]
+WantedBy=multi-user.target
