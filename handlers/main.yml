@@ -1,5 +1,2 @@
 ---
 # handlers file for oracle-omc-cloudagent
-- name: reload sysctl config
-  shell: sysctl --system
-  listen: "reload sysctl config"
