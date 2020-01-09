@@ -120,6 +120,20 @@
     group: "{{ omc_cloudagent_group }}"
     mode: 0740
 
+
+- name: stop using daemon script
+  shell: |
+    sh {{omc_cloudagent_script_dir}}/oracle-omc-agent.sh stop
+  become: yes
+  become_user: "{{omc_cloudagent_user}}"
+  register: agent_daemon_shutdown_test
+  failed_when:
+    - "agent_daemon_shutdown_test.rc is defined"
+    - "agent_daemon_shutdown_test.rc > 0"
+  changed_when:
+    - "agent_daemon_shutdown_test.rc is defined"
+    - "agent_daemon_shutdown_test.rc == 0"
+    - "'Agent is already running' not in agent_startup.stdout"
 - name: Copy templated systemd unit file
   template:
     src: "{{ role_path }}/templates/oracle-omc-agent.service.j2"

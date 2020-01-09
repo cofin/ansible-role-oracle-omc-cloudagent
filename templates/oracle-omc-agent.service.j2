@@ -1,11 +1,11 @@
 [Unit]
-Description=Peoplesoft App Service
+Description=Oracle Management Cloud Agent
 After=network.target
 
 [Service]
 Type=forking
-User={{omc_cloudagent_user}}
-Group={{omc_cloudagent_group}}
+#User={{omc_cloudagent_user}}
+#Group={{omc_cloudagent_group}}
 ExecStart={{omc_cloudagent_script_dir}}/oracle-omc-agent.sh start
 ExecStop={{omc_cloudagent_script_dir}}/oracle-omc-agent.sh stop
 
