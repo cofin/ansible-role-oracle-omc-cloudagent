@@ -1,4 +1,12 @@
 #!/bin/sh
+### BEGIN INIT INFO
+# Provides:          Oracle Management Cloud Agent
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       Controls the OMC CloudAgent startup and shutdown
+### END INIT INFO
 SCRIPT={{omc_cloudagent_install_dir}}/agent_inst/bin/omcli
 PID_FILE={{omc_cloudagent_pid_dir}}/agent.pid
 
