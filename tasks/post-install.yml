@@ -155,7 +155,7 @@
     dest: "/etc/init.d/oracle-omc-agent"
     owner: root
     group: root
-    mode: 0740
+    mode: 0770
 
 - name: Enable and start at boot
   service:
