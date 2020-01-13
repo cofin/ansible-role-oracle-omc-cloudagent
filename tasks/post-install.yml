@@ -124,7 +124,7 @@
   shell: |
     sh {{omc_cloudagent_script_dir}}/oracle-omc-agent.sh stop
   become: yes
-  become_user: "{{omc_cloudagent_user}}"
+  become_user: root
   register: agent_daemon_shutdown_test
   failed_when:
     - "agent_daemon_shutdown_test.rc is defined"
