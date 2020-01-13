@@ -17,10 +17,10 @@ omc_cloudagent_additional_gateways: ""
 omc_cloudagent_reinstall_agent: no
 omc_cloudagent_stage_dir: "/tmp/ansible-omc-cloudagent"
 omc_cloudagent_software_url: "https://storage.us2.oraclecloud.com/v1/Storage-a511425/omcprodglobal/cloudagent/linux.x64/latest/cloudagent_linux.x64.zip"
-omc_cloudagent_install_dir: "/opt/oracle/omc/agent"
+omc_cloudagent_install_dir: "/opt/omc/agent"
 omc_cloudagent_users_group: svc-omc
-omc_cloudagent_script_dir: "/opt/oracle/omc/scripts"
-omc_cloudagent_pid_dir: "/var/run/oracle/omc"
+omc_cloudagent_script_dir: "/opt/omc/scripts"
+omc_cloudagent_pid_dir: "/var/run/omc"
 omc_cloudagent_users:
   - username: svc-omc
     name: Oracle OMC Monitoring User
@@ -37,11 +37,6 @@ omc_cloudagent_groups:
     gid: 543198
     sudo: yes
 #omc_cloudagent_databases_monitored: []
-
-
-
-
-
 
 # tuning
 omc_cloudagent_cpu_throttle_percentage: 5
@@ -99,7 +94,6 @@ omc_cloudagent_asm_service: "+ASM"
 #         - { displayName: "", value: "" }
 #       - capability:
 #         - { displayName: "", value: "" }
-
 
 # omc_cloudagent_deploy_apm: no
 # omc_cloudagent_asm_credentials:
