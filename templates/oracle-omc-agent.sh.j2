@@ -19,6 +19,7 @@ start() {
     if [ -f $PID_FILE ]; then
       rm $PID_FILE
     fi
+    sleep 5
     $SCRIPT status agent | grep Process | grep -v Parent | awk '{print $4}' > $PID_FILE
     PID=$(cat $PID_FILE)
   fi
