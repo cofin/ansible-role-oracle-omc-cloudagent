@@ -17,14 +17,17 @@ start() {
     echo 'Starting Oracle OMC CloudAgent' >&2
     su - $RUNAS -c "$SCRIPT start agent"
     echo 'Oracle OMC CloudAgent started.  Setting PID' >&2
-    if [ -f $PID_FILE ]; then
-      rm $PID_FILE
-    fi
-    sleep 5
+
+    sleep 30
     PID=$(su - $RUNAS -c "$SCRIPT status agent | grep Process | grep -v Parent")
 
-    if [[ $PID =~ $ONLY_NUMBERS_REG_EXP ]] ; then
-        echo $PID | awk '{print $4}' > $PID_FILE
+    #if [[ $PID =~ $ONLY_NUMBERS_REG_EXP ]] ; then
+    #    echo $PID | awk '{print $4}' > $PID_FILE
+    #fi
+    if [ -n "$PID" ] && [ "$PID" -eq "$PID" ] 2>/dev/null; then
+      echo $PID | awk '{print $4}' > $PID_FILE
+    else
+      echo '' > $PID_FILE
     fi
 
   fi
@@ -37,7 +40,7 @@ stop() {
     su - $RUNAS -c "$SCRIPT stop agent"
     echo 'Oracle OMC CloudAgent stopped.' >&2
     if [ -f $PID_FILE ]; then
-      rm $PID_FILE
+      echo '' > $PID_FILE
     fi
   fi
 }
