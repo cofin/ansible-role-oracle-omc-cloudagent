@@ -133,31 +133,31 @@
     - "agent_daemon_shutdown_test.rc is defined"
     - "agent_daemon_shutdown_test.rc == 0"
     - "'Agent is already running' not in agent_startup.stdout"
-- name: Copy templated systemd unit file
-  template:
-    src: "{{ role_path }}/templates/oracle-omc-agent.service.j2"
-    dest: "/etc/systemd/system/oracle-omc-agent.service"
-    owner: root
-    group: root
-    mode: 0740
-
-- name: Enable and start at boot
-  systemd:
-    daemon_reload: yes
-    force: yes
-    name: oracle-omc-agent
-    state: started
-    enabled: yes
-# - name: Copy templated init.d
+# - name: Copy templated systemd unit file
 #   template:
-#     src: "{{ role_path }}/templates/oracle-omc-agent.sh.j2"
-#     dest: "/etc/init.d/oracle-omc-agent"
+#     src: "{{ role_path }}/templates/oracle-omc-agent.service.j2"
+#     dest: "/etc/systemd/system/oracle-omc-agent.service"
 #     owner: root
 #     group: root
-#     mode: 0770
+#     mode: 0740
 
 # - name: Enable and start at boot
-#   service:
+#   systemd:
+#     daemon_reload: yes
+#     force: yes
 #     name: oracle-omc-agent
 #     state: started
 #     enabled: yes
+- name: Copy templated init.d
+  template:
+    src: "{{ role_path }}/templates/oracle-omc-agent.sh.j2"
+    dest: "/etc/init.d/oracle-omc-agent"
+    owner: root
+    group: root
+    mode: 0770
+
+- name: Enable and start at boot
+  service:
+    name: oracle-omc-agent
+    state: started
+    enabled: yes
