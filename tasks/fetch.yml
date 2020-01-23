@@ -10,7 +10,7 @@
   run_once: yes
 - name: check to see if the OMC agent installation files are already downloaded and current
   stat:
-    path: "{{ role_path }}/files/cloudagent_linux.x64.zip"
+    path: "{{ role_path }}/files/{{omc_cloudagent_software}}"
   become: no
   delegate_to: localhost
   register: ls_omc_cloudagent_image
@@ -18,7 +18,7 @@
 - name: "download latest cloud agent from public URL"
   get_url:
     url: "{{ omc_cloudagent_software_url }}"
-    dest: "{{ role_path }}/files/cloudagent_linux.x64.zip"
+    dest: "{{ role_path }}/files/{{omc_cloudagent_software}}"
   delegate_to: localhost
   become: no
   run_once: yes

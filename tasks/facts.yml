@@ -1,5 +1,5 @@
 ---
-- name: set basic variables for use in play
+- name: Set variables for Linux installations
   set_fact:
     omc_cloudagent_install_cmd: |
       {{omc_cloudagent_stage_dir}}/AgentInstall.sh \
@@ -16,3 +16,27 @@
     omc_cloudagent_group: "{{omc_cloudagent_users.0.group }}"
     omc_cloudagent_software: "cloudagent_linux.x64.zip"
     omc_cloudagent_ulimts: "{{omc_cloudagent_users.0.ulimits }}"
+    omc_cloudagent_software_url: "https://storage.us2.oraclecloud.com/v1/Storage-a511425/omcprodglobal/cloudagent/linux.x64/latest/cloudagent_linux.x64.zip"
+  when:
+    - ansible_os_family == 'RedHat'
+
+- name: Set variables for Windows installations
+  set_fact:
+    omc_cloudagent_install_cmd: |
+      {{omc_cloudagent_stage_dir}}/AgentInstall.exe \
+        TENANT_NAME={{ omc_cloudagent_tenant_name }} \
+        AGENT_REGISTRATION_KEY={{ omc_cloudagent_registration_key}} \
+        AGENT_BASE_DIRECTORY={{ omc_cloudagent_install_dir }} \
+        AGENT_PORT={{ omc_cloudagent_agent_port }} \
+        OMC_URL={{ omc_cloudagent_url_endpoint }} \
+        {% if omc_cloudagent_gateway_host|length > 0 %}GATEWAY_HOST={{ omc_cloudagent_gateway_host }} \{% endif %}
+        {% if omc_cloudagent_gateway_host|length > 0 and omc_cloudagent_gateway_port|string|length > 0 %}GATEWAY_PORT={{ omc_cloudagent_gateway_port }} \{% endif %}
+        {% if omc_cloudagent_additional_gateways|length > 0 %}ADDITIONAL_GATEWAYS={{ omc_cloudagent_additional_gateways }} \{% endif %}
+        REINSTALL={% if omc_cloudagent_reinstall_agent %}TRUE{% else %}FALSE{% endif %}
+    omc_cloudagent_user: "{{omc_cloudagent_users.0.username }}"
+    omc_cloudagent_group: "{{omc_cloudagent_users.0.group }}"
+    omc_cloudagent_software: "cloudagent_windows.x64.zip"
+    omc_cloudagent_ulimts: "{{omc_cloudagent_users.0.ulimits }}"
+    omc_cloudagent_software_url: "https://storage.us2.oraclecloud.com/v1/Storage-a511425/omcprodglobal/cloudagent/windows.x64/latest/cloudagent_windows.x64.zip"
+  when:
+    - ansible_os_family == 'Windows'
