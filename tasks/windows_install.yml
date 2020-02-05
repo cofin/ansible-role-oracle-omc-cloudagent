@@ -11,8 +11,8 @@
 - name: Unzip Windows installation files to the staging directory
   win_unzip:
     src: "{{ omc_cloudagent_stage_dir_windows}}\\cloudagent_windows.x64.zip"
-    dest: "{{ omc_cloudagent_stage_dir_windows }}\\agentUnzipped"
-    creates: "{{ omc_cloudagent_stage_dir_windows }}\\agentUnzipped"
+    dest: "{{ omc_cloudagent_stage_dir_windows }}\\out"
+    creates: "{{ omc_cloudagent_stage_dir_windows }}\\out"
 
 - name: check if agent directory exists already
   win_stat:

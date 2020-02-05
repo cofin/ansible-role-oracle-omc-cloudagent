@@ -2,7 +2,7 @@
 - name: set basic variables (windows specific) for use in play
   set_fact:
     omc_cloudagent_install_cmd_windows: >
-        {{ omc_cloudagent_stage_dir_windows }}\agentUnzipped\AgentInstall.bat 
+        {{ omc_cloudagent_stage_dir_windows }}\out\AgentInstall.bat 
         TENANT_NAME={{ omc_cloudagent_tenant_name }} 
         AGENT_REGISTRATION_KEY={{ omc_cloudagent_registration_key}} 
         AGENT_BASE_DIRECTORY={{ omc_cloudagent_install_dir_windows }} 
