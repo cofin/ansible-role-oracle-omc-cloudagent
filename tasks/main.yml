@@ -14,7 +14,6 @@
   when: ansible_os_family != "Windows"
 - name: Download latest OMC agent installation file
   include_tasks: fetch.yml
-  when: ansible_os_family != "Windows"
 - name: Install OMC Agent
   include_tasks: install.yml
   when: ansible_os_family != "Windows"
