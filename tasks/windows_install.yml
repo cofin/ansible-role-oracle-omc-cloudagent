@@ -1,0 +1,26 @@
+- name: Create directory structure
+  win_file:
+    path: "{{ omc_cloudagent_stage_dir_windows }}"
+    state: directory
+
+- name: Copy the Windows agent installation files to the server
+  win_copy:
+    src: cloudagent_windows.x64.zip
+    dest: "{{ omc_cloudagent_stage_dir_windows}}\\cloudagent_windows.x64.zip"
+
+- name: Unzip Windows installation files to the staging directory
+  win_unzip:
+    src: "{{ omc_cloudagent_stage_dir_windows}}\\cloudagent_windows.x64.zip"
+    dest: "{{ omc_cloudagent_stage_dir_windows }}\\out"
+    creates: "{{ omc_cloudagent_stage_dir_windows }}\\out"
+
+- name: check if agent directory exists already
+  win_stat:
+    path: '{{ omc_cloudagent_install_dir_windows }}'
+  register: omc_cloudagent_install_dir_windows_presence
+
+- name: execute the command to install the agent
+  win_shell: '{{ omc_cloudagent_install_cmd_windows }}'
+  when: not omc_cloudagent_install_dir_windows_presence.stat.exists
+  become: yes
+  become_user: Administrator

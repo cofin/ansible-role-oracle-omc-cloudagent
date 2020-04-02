@@ -19,6 +19,9 @@ omc_cloudagent_required_packages:
 
 omc_cloudagent_authorized_keys_file: ".ssh/authorized_keys"
 
+omc_cloudagent_install_dir_windows: C:\omc_agent
+omc_cloudagent_stage_dir_windows: C:\omc_agent_stage
+omc_cloudagent_software_url_windows: https://storage.us2.oraclecloud.com/v1/Storage-a511425/omcprodglobal/cloudagent/windows.x64/latest/cloudagent_windows.x64.zip
 
 
 omc_cloudagent_default_permissions:

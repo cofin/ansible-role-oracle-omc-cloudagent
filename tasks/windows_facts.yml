@@ -1,0 +1,18 @@
+---
+- name: set basic variables (windows specific) for use in play
+  set_fact:
+    omc_cloudagent_install_cmd_windows: >
+        {{ omc_cloudagent_stage_dir_windows }}\out\AgentInstall.bat 
+        TENANT_NAME={{ omc_cloudagent_tenant_name }} 
+        AGENT_REGISTRATION_KEY={{ omc_cloudagent_registration_key}} 
+        AGENT_BASE_DIRECTORY={{ omc_cloudagent_install_dir_windows }} 
+        AGENT_PORT={{ omc_cloudagent_agent_port }} 
+        OMC_URL={{ omc_cloudagent_url_endpoint }} 
+        {% if omc_cloudagent_gateway_host|length > 0 %}GATEWAY_HOST={{ omc_cloudagent_gateway_host }} {% endif %}
+        {% if omc_cloudagent_gateway_host|length > 0 and omc_cloudagent_gateway_port|string|length > 0 %}GATEWAY_PORT={{ omc_cloudagent_gateway_port }} {% endif %}
+        {% if omc_cloudagent_additional_gateways|length > 0 %}ADDITIONAL_GATEWAYS={{ omc_cloudagent_additional_gateways }} {% endif %}
+        REINSTALL={% if omc_cloudagent_reinstall_agent %}TRUE{% else %}FALSE{% endif %}
+    omc_cloudagent_software_windows: "cloudagent_windows.x64.zip"
+
+
+
