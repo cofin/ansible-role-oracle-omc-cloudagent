@@ -78,5 +78,5 @@
     - ulimits
     - skip_missing: yes
   register: omc_cloudagent_ulimits
-  notify: "reload sysctl config"
+  notify: "reload systemd configuration"
   tags: ["users", "configuration"]

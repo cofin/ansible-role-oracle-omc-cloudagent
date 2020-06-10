@@ -1,2 +1,6 @@
 ---
 # handlers file for oracle-omc-cloudagent
+- name: reload systemd configuration
+  become: yes
+  systemd:
+    daemon_reload: true
